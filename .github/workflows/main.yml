@@ -6,7 +6,7 @@ on:
   workflow_dispatch:          # ручной запуск
 
 permissions:
-  contents: write             # разрешаем пушить в репозиторий
+  contents: write
 
 jobs:
   update-cache:
@@ -26,11 +26,13 @@ jobs:
     
     - name: Update weather cache
       run: |
-        python update.py   # ← теперь запускается скрипт, который завершается
+        python update.py
     
     - name: Commit and push cache
       run: |
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
+        # Синхронизируемся с удалённым репозиторием
+        git pull origin main --rebase
         git add cache.json
         git diff --staged --quiet || (git commit -m "Обновление кеша погоды [skip ci]" && git push)

@@ -1,9 +1,3 @@
-// -------- Базовый URL бэкенда (будет подставлен автоматически) --------
-// Для локальной разработки используем localhost, для продакшена - GitHub Actions
-const API_BASE = window.location.hostname === 'localhost' 
-    ? 'http://localhost:5000' 
-    : 'https://ваш-username.github.io'; // ЗАМЕНИТЕ НА СВОЙ GitHub Pages URL
-
 // -------- Список городов --------
 const cities = [
     { name: 'Москва', lat: 55.7558, lon: 37.6173 },
@@ -18,34 +12,7 @@ const cities = [
     { name: 'Ростов-на-Дону', lat: 47.2357, lon: 39.7015 },
     { name: 'Уфа', lat: 54.7348, lon: 55.9579 },
     { name: 'Красноярск', lat: 56.0106, lon: 92.8526 },
-    { name: 'Владивосток', lat: 43.1316, lon: 131.9238 },
-    { name: 'Пермь', lat: 58.0104, lon: 56.2294 },
-    { name: 'Воронеж', lat: 51.6608, lon: 39.2003 },
-    { name: 'Волгоград', lat: 48.7071, lon: 44.5169 },
-    { name: 'Краснодар', lat: 45.0355, lon: 38.9753 },
-    { name: 'Саратов', lat: 51.5336, lon: 46.0342 },
-    { name: 'Тюмень', lat: 57.1613, lon: 65.5254 },
-    { name: 'Тольятти', lat: 53.5078, lon: 49.4204 },
-    { name: 'Ижевск', lat: 56.8528, lon: 53.2045 },
-    { name: 'Барнаул', lat: 53.3561, lon: 83.7697 },
-    { name: 'Ульяновск', lat: 54.3142, lon: 48.4031 },
-    { name: 'Иркутск', lat: 52.2864, lon: 104.2807 },
-    { name: 'Хабаровск', lat: 48.4802, lon: 135.0719 },
-    { name: 'Ярославль', lat: 57.6261, lon: 39.8845 },
-    { name: 'Махачкала', lat: 42.9849, lon: 47.5046 },
-    { name: 'Оренбург', lat: 51.7675, lon: 55.0989 },
-    { name: 'Новокузнецк', lat: 53.7596, lon: 87.1216 },
-    { name: 'Рязань', lat: 54.6294, lon: 39.7358 },
-    { name: 'Томск', lat: 56.4884, lon: 84.9517 },
-    { name: 'Пенза', lat: 53.1959, lon: 45.0182 },
-    { name: 'Липецк', lat: 52.6086, lon: 39.5994 },
-    { name: 'Киров', lat: 58.6036, lon: 49.6681 },
-    { name: 'Чебоксары', lat: 56.1398, lon: 47.2966 },
-    { name: 'Калининград', lat: 54.7104, lon: 20.4522 },
-    { name: 'Тула', lat: 54.1931, lon: 37.6175 },
-    { name: 'Сочи', lat: 43.5855, lon: 39.7231 },
-    { name: 'Севастополь', lat: 44.6166, lon: 33.5254 },
-    { name: 'Симферополь', lat: 44.9521, lon: 34.1024 }
+    { name: 'Владивосток', lat: 43.1316, lon: 131.9238 }
 ];
 
 // -------- Инициализация карты --------
@@ -86,23 +53,41 @@ const selectedCitySpan = document.getElementById('selected-city');
 
 closeBtn.addEventListener('click', () => panel.classList.remove('visible'));
 
-// -------- Запрос погоды --------
+// -------- Запрос погоды (загрузка cache.json с текущего домена) --------
 async function fetchWeather(lat, lon, name) {
     try {
-        const resp = await fetch(`${API_BASE}/weather?lat=${lat}&lon=${lon}`);
-        const data = await resp.json();
-        if (data.error) {
-            alert('Ошибка: ' + data.error);
+        // Загружаем cache.json из той же папки, где лежит index.html
+        const resp = await fetch('cache.json');
+        if (!resp.ok) throw new Error('Файл cache.json не найден');
+        const cache = await resp.json();
+
+        // Ищем ближайший город по координатам
+        let best = null;
+        let bestDist = Infinity;
+        for (const [cityName, data] of Object.entries(cache)) {
+            const dlat = data.lat - lat;
+            const dlon = data.lon - lon;
+            const dist = dlat*dlat + dlon*dlon;
+            if (dist < bestDist) {
+                bestDist = dist;
+                best = { name: cityName, ...data };
+            }
+        }
+
+        if (!best || bestDist > 0.5) {
+            alert('Город не найден в кеше (попробуйте выбрать другой)');
             return;
         }
-        cityName.textContent = name || data.city || 'Неизвестно';
-        temp.textContent = data.temp !== undefined ? data.temp + '°C' : '--';
-        wind.textContent = data.wind_speed !== undefined ? data.wind_speed + ' м/с' : '--';
-        gust.textContent = data.gust !== undefined ? data.gust + ' м/с' : '--';
-        precip.textContent = data.precipitation !== undefined ? data.precipitation + ' мм' : '--';
-        condition.textContent = data.condition || '--';
 
-        const risk = data.risk || 0;
+        // Заполняем панель
+        cityName.textContent = name || best.name;
+        temp.textContent = best.weather.temp !== undefined ? best.weather.temp + '°C' : '--';
+        wind.textContent = best.weather.wind_speed !== undefined ? best.weather.wind_speed + ' м/с' : '--';
+        gust.textContent = best.weather.gust !== undefined ? best.weather.gust + ' м/с' : '--';
+        precip.textContent = best.weather.precipitation !== undefined ? best.weather.precipitation + ' мм' : '--';
+        condition.textContent = best.weather.condition || '--';
+
+        const risk = best.risk || 0;
         riskFill.style.width = risk + '%';
         riskPercent.textContent = risk + '%';
 
@@ -123,7 +108,7 @@ async function fetchWeather(lat, lon, name) {
         selectedCitySpan.textContent = `📍 ${cityName.textContent}`;
         panel.classList.add('visible');
     } catch (err) {
-        alert('Не удалось получить погоду: ' + err.message);
+        alert('Не удалось загрузить данные: ' + err.message);
     }
 }
 

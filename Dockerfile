@@ -7,7 +7,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app.py .
 
-# Создаём папку для данных
 RUN mkdir -p /app/data
 
 EXPOSE 5000

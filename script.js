@@ -44,21 +44,11 @@ const cities = [
 
 // -------- Инициализация карты --------
 const map = L.map('map').setView([64, 90], 4);
-
-// СВЕТЛАЯ КАРТА (CartoDB Light)
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; CartoDB',
     subdomains: 'abcd',
     maxZoom: 19
 }).addTo(map);
-
-// Альтернативный вариант (стандартный OpenStreetMap) – раскомментируйте, если хотите использовать его вместо CartoDB
-/*
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-    maxZoom: 19
-}).addTo(map);
-*/
 
 // -------- Маркеры --------
 let markers = {};
@@ -95,7 +85,7 @@ async function updateHeatMap() {
     }
 }
 
-// -------- Панель информации --------
+// -------- Панель --------
 const panel = document.getElementById('info-panel');
 const closeBtn = document.getElementById('close-panel');
 const cityName = document.getElementById('city-name');
@@ -114,7 +104,7 @@ const favoritesToggle = document.getElementById('favorites-toggle');
 
 closeBtn.addEventListener('click', () => panel.classList.remove('visible'));
 
-// -------- Избранное (localStorage) --------
+// -------- Избранное --------
 let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
 
 function saveFavorites() {
@@ -188,7 +178,7 @@ searchInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') searchBtn.click();
 });
 
-// -------- Основная функция получения погоды --------
+// -------- Основная функция --------
 async function fetchWeather(lat, lon, name) {
     try {
         const resp = await fetch('cache.json?t=' + Date.now());
@@ -242,7 +232,6 @@ async function fetchWeather(lat, lon, name) {
         updateFavoriteButton(cityName.textContent);
 
         await loadHourlyForecast(lat, lon);
-        await load7DayForecast(lat, lon);
 
     } catch (err) {
         alert('Не удалось загрузить данные: ' + err.message);
@@ -274,16 +263,18 @@ function getWeatherEmoji(condition) {
     return map[condition] || '🌥️';
 }
 
-// -------- Почасовой прогноз --------
+// -------- Почасовой прогноз с ветром (ВСЕ 24 ЧАСА) --------
 async function loadHourlyForecast(lat, lon) {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,weathercode&timezone=auto&forecast_days=1`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,weathercode,wind_speed_10m,wind_direction_10m&timezone=auto&forecast_days=1`;
     try {
         const resp = await fetch(url);
         const data = await resp.json();
         const hourly = data.hourly;
-        const times = hourly.time.slice(0, 12);
-        const temps = hourly.temperature_2m.slice(0, 12);
-        const codes = hourly.weathercode.slice(0, 12);
+        const times = hourly.time; // все 24 часа
+        const temps = hourly.temperature_2m;
+        const codes = hourly.weathercode;
+        const windSpeeds = hourly.wind_speed_10m;
+        const windDirs = hourly.wind_direction_10m;
 
         const container = document.getElementById('hourly-scroll');
         container.innerHTML = '';
@@ -291,12 +282,19 @@ async function loadHourlyForecast(lat, lon) {
             const time = t.slice(11, 16);
             const temp = temps[i];
             const emoji = getWeatherEmojiByCode(codes[i]);
+            const speed = windSpeeds[i];
+            const dir = windDirs[i];
+            const arrow = getWindArrow(dir);
             const div = document.createElement('div');
             div.className = 'hourly-item';
             div.innerHTML = `
                 <div class="hourly-time">${time}</div>
                 <div class="hourly-icon">${emoji}</div>
                 <div class="hourly-temp">${temp}°</div>
+                <div class="hourly-wind">
+                    <span class="wind-arrow" style="transform: rotate(${dir}deg);">↑</span>
+                    <span>${speed} м/с</span>
+                </div>
             `;
             container.appendChild(div);
         });
@@ -318,65 +316,10 @@ function getWeatherEmojiByCode(code) {
     return map[code] || '🌥️';
 }
 
-// -------- Прогноз на 7 дней --------
-let chartInstance = null;
-
-async function load7DayForecast(lat, lon) {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=auto&forecast_days=7`;
-    try {
-        const resp = await fetch(url);
-        const data = await resp.json();
-        const daily = data.daily;
-        const labels = daily.time.map(t => t.slice(5, 10));
-        const maxTemps = daily.temperature_2m_max;
-        const minTemps = daily.temperature_2m_min;
-
-        const ctx = document.getElementById('chartCanvas').getContext('2d');
-        if (chartInstance) chartInstance.destroy();
-
-        chartInstance = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [
-                    {
-                        label: 'Макс. °C',
-                        data: maxTemps,
-                        borderColor: '#ffb347',
-                        backgroundColor: 'rgba(255,179,71,0.1)',
-                        tension: 0.3,
-                        fill: true,
-                        pointBackgroundColor: '#ffb347'
-                    },
-                    {
-                        label: 'Мин. °C',
-                        data: minTemps,
-                        borderColor: '#4fc3f7',
-                        backgroundColor: 'rgba(79,195,247,0.1)',
-                        tension: 0.3,
-                        fill: true,
-                        pointBackgroundColor: '#4fc3f7'
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        labels: { color: '#e0e0e0', font: { size: 10 } }
-                    }
-                },
-                scales: {
-                    x: { ticks: { color: '#e0e0e0', font: { size: 10 } } },
-                    y: { ticks: { color: '#e0e0e0', font: { size: 10 } } }
-                }
-            }
-        });
-        document.getElementById('forecast-chart').style.display = 'block';
-    } catch (e) {
-        console.warn('Прогноз на 7 дней не загружен', e);
-    }
+function getWindArrow(deg) {
+    if (deg === undefined || deg === null) return '?';
+    // возвращаем стрелку, повёрнутую на угол deg (0 = север)
+    return '↑';
 }
 
 // -------- Автообновление --------

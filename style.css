@@ -108,6 +108,14 @@ header {
     color: #0b0e14;
     border-color: #ffb347;
 }
+.fav-btn.radar-active {
+    background: #4fc3f7;
+    color: #0b0e14;
+    border-color: #4fc3f7;
+}
+.fav-btn.radar-active i {
+    color: #0b0e14;
+}
 .header-info {
     font-size: 0.8rem;
     color: #aab;

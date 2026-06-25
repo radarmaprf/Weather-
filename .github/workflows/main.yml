@@ -1,14 +1,15 @@
-name: Weather Radar CI/CD
+name: Weather Radar Cache Updater
 
 on:
-  push:
-    branches: [ main ]
   schedule:
-    - cron: '*/30 * * * *'  # каждые 30 минут
-  workflow_dispatch:        # ручной запуск
+    - cron: '*/30 * * * *'   # каждые 30 минут
+  workflow_dispatch:          # ручной запуск
+
+permissions:
+  contents: write             # разрешаем пушить в репозиторий
 
 jobs:
-  deploy-and-update:
+  update-cache:
     runs-on: ubuntu-latest
     
     steps:
@@ -25,12 +26,11 @@ jobs:
     
     - name: Update weather cache
       run: |
-        python app.py  # запускаем обновление кеша
-        
+        python update.py   # ← теперь запускается скрипт, который завершается
+    
     - name: Commit and push cache
       run: |
-        git config user.name github-actions
-        git config user.email github-actions@github.com
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
         git add cache.json
-        git commit -m "Update weather cache [skip ci]" || exit 0
-        git push
+        git diff --staged --quiet || (git commit -m "Обновление кеша погоды [skip ci]" && git push)

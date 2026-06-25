@@ -21,6 +21,9 @@
                     <input type="text" id="search-input" placeholder="Город..." />
                     <button id="search-btn"><i class="fas fa-search"></i></button>
                 </div>
+                <button id="radar-toggle" class="fav-btn" aria-label="Радар осадков">
+                    <i class="fas fa-cloud-rain"></i> Радар
+                </button>
                 <button id="favorites-toggle" class="fav-btn" aria-label="Избранное">
                     <i class="fas fa-star"></i>
                 </button>
@@ -55,7 +58,7 @@
             </div>
             <div id="risk-label">Безопасно</div>
 
-            <!-- Прогноз по часам (ветер + температура) -->
+            <!-- Прогноз по часам -->
             <div id="hourly-forecast" style="display:none; margin-top:10px;">
                 <h4>Прогноз на сегодня <span style="font-weight:normal; font-size:0.7rem; color:#aab;">(ветер и погода)</span></h4>
                 <div id="hourly-scroll"></div>

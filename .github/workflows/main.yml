@@ -32,7 +32,7 @@ jobs:
       run: |
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
-        # Синхронизируемся с удалённым репозиторием
-        git pull origin main --rebase
+        # Подтягиваем изменения с автоматическим stash
+        git pull origin main --rebase --autostash
         git add cache.json
         git diff --staged --quiet || (git commit -m "Обновление кеша погоды [skip ci]" && git push)

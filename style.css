@@ -222,7 +222,7 @@ header {
     font-size: 1rem;
     padding: 4px 0;
 }
-#hourly-forecast h4, #forecast-chart h4 {
+#hourly-forecast h4 {
     font-size: 0.9rem;
     margin-bottom: 4px;
     color: #aab;
@@ -230,34 +230,45 @@ header {
 #hourly-scroll {
     display: flex;
     overflow-x: auto;
-    gap: 6px;
+    gap: 8px;
     padding: 4px 0;
     scrollbar-width: thin;
+    scroll-snap-type: x mandatory;
 }
 .hourly-item {
-    min-width: 50px;
+    min-width: 70px;
     text-align: center;
     background: #1e232c;
     border-radius: 10px;
-    padding: 4px 2px;
+    padding: 6px 4px;
     border: 1px solid #2a2f3a;
+    scroll-snap-align: start;
+    flex-shrink: 0;
 }
 .hourly-item .hourly-time {
     font-size: 0.6rem;
     color: #aab;
 }
 .hourly-item .hourly-icon {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
 }
 .hourly-item .hourly-temp {
-    font-size: 0.7rem;
+    font-size: 0.8rem;
+    font-weight: 500;
 }
-#forecast-chart {
-    height: 120px;
+.hourly-item .hourly-wind {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    font-size: 0.6rem;
+    color: #aab;
+    margin-top: 2px;
 }
-#chartCanvas {
-    height: 100% !important;
-    width: 100% !important;
+.hourly-item .wind-arrow {
+    display: inline-block;
+    font-size: 0.8rem;
+    transition: transform 0.3s;
 }
 .leaflet-popup-content-wrapper {
     background: #1e232c;
@@ -268,7 +279,6 @@ header {
     background: #1e232c;
 }
 
-/* Мобильная оптимизация для очень маленьких экранов */
 @media (max-width: 480px) {
     header {
         padding: 6px 8px;
@@ -296,11 +306,11 @@ header {
     .risk-meter span { font-size: 0.7rem; }
     #risk-percent { font-size: 0.9rem; }
     #risk-label { font-size: 0.9rem; }
-    .hourly-item { min-width: 40px; }
+    .hourly-item { min-width: 60px; padding: 4px 2px; }
     .hourly-item .hourly-time { font-size: 0.5rem; }
-    .hourly-item .hourly-icon { font-size: 1rem; }
-    .hourly-item .hourly-temp { font-size: 0.6rem; }
-    #forecast-chart { height: 100px; }
+    .hourly-item .hourly-icon { font-size: 1.2rem; }
+    .hourly-item .hourly-temp { font-size: 0.7rem; }
+    .hourly-item .hourly-wind { font-size: 0.5rem; }
 }
 
 @media (min-width: 769px) {

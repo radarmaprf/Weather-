@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Радар погоды России — Риск торнадо и штормов</title>
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -20,25 +20,28 @@
         <header>
             <div class="logo">
                 <i class="fas fa-cloud-sun-rain"></i>
-                <h1>Радар ⚡ Россия</h1>
+                <h1>Радар ⚡</h1>
             </div>
             <div class="header-controls">
                 <div class="search-container">
-                    <input type="text" id="search-input" placeholder="Введите город..." />
+                    <input type="text" id="search-input" placeholder="Город..." />
                     <button id="search-btn"><i class="fas fa-search"></i></button>
                 </div>
-                <button id="favorites-toggle" class="fav-btn"><i class="fas fa-star"></i> Избранное</button>
+                <button id="favorites-toggle" class="fav-btn" aria-label="Избранное">
+                    <i class="fas fa-star"></i>
+                </button>
             </div>
-            <div class="header-info">
-                <span id="selected-city">Выберите город на карте</span>
-            </div>
+            <div class="header-info" id="selected-city">Выберите город</div>
         </header>
 
         <div id="map"></div>
 
         <div id="info-panel" class="hidden">
-            <div class="close-btn" id="close-panel"><i class="fas fa-times"></i></div>
-            <h2 id="city-name">Город</h2>
+            <div class="panel-header">
+                <div class="close-btn" id="close-panel"><i class="fas fa-times"></i></div>
+                <h2 id="city-name">Город</h2>
+                <button id="favorite-btn" class="fav-btn small"><i class="fas fa-star"></i></button>
+            </div>
             <div class="weather-main">
                 <div class="weather-icon" id="weather-icon">☀️</div>
                 <div class="weather-temp" id="temp">--°C</div>
@@ -59,25 +62,21 @@
             <div id="risk-label">Безопасно</div>
 
             <!-- Прогноз по часам -->
-            <div id="hourly-forecast" style="display:none; margin-top:15px;">
+            <div id="hourly-forecast" style="display:none; margin-top:10px;">
                 <h4>Прогноз на сегодня</h4>
-                <div id="hourly-scroll" style="display:flex; overflow-x:auto; gap:10px; padding:5px 0;"></div>
+                <div id="hourly-scroll"></div>
             </div>
 
             <!-- График на 7 дней -->
-            <div id="forecast-chart" style="display:none; margin-top:15px;">
+            <div id="forecast-chart" style="display:none; margin-top:10px;">
                 <h4>Прогноз на 7 дней</h4>
-                <canvas id="chartCanvas" height="150"></canvas>
+                <canvas id="chartCanvas"></canvas>
             </div>
-
-            <!-- Кнопка избранного -->
-            <button id="favorite-btn" class="fav-btn" style="margin-top:15px; width:100%;"><i class="fas fa-star"></i> В избранное</button>
         </div>
     </div>
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <!-- Наш скрипт -->
     <script src="script.js"></script>
 </body>
 </html>

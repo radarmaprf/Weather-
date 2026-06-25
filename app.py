@@ -9,7 +9,7 @@ app = Flask(__name__)
 # Путь к файлу кеша
 CACHE_FILE = 'cache.json'
 
-# Список городов
+# Список городов (можно сократить до 10–15 для ускорения)
 CITIES = [
     {'name': 'Москва', 'lat': 55.7558, 'lon': 37.6173},
     {'name': 'Санкт-Петербург', 'lat': 59.9343, 'lon': 30.3351},
@@ -23,39 +23,13 @@ CITIES = [
     {'name': 'Ростов-на-Дону', 'lat': 47.2357, 'lon': 39.7015},
     {'name': 'Уфа', 'lat': 54.7348, 'lon': 55.9579},
     {'name': 'Красноярск', 'lat': 56.0106, 'lon': 92.8526},
-    {'name': 'Владивосток', 'lat': 43.1316, 'lon': 131.9238},
-    {'name': 'Пермь', 'lat': 58.0104, 'lon': 56.2294},
-    {'name': 'Воронеж', 'lat': 51.6608, 'lon': 39.2003},
-    {'name': 'Волгоград', 'lat': 48.7071, 'lon': 44.5169},
-    {'name': 'Краснодар', 'lat': 45.0355, 'lon': 38.9753},
-    {'name': 'Саратов', 'lat': 51.5336, 'lon': 46.0342},
-    {'name': 'Тюмень', 'lat': 57.1613, 'lon': 65.5254},
-    {'name': 'Тольятти', 'lat': 53.5078, 'lon': 49.4204},
-    {'name': 'Ижевск', 'lat': 56.8528, 'lon': 53.2045},
-    {'name': 'Барнаул', 'lat': 53.3561, 'lon': 83.7697},
-    {'name': 'Ульяновск', 'lat': 54.3142, 'lon': 48.4031},
-    {'name': 'Иркутск', 'lat': 52.2864, 'lon': 104.2807},
-    {'name': 'Хабаровск', 'lat': 48.4802, 'lon': 135.0719},
-    {'name': 'Ярославль', 'lat': 57.6261, 'lon': 39.8845},
-    {'name': 'Махачкала', 'lat': 42.9849, 'lon': 47.5046},
-    {'name': 'Оренбург', 'lat': 51.7675, 'lon': 55.0989},
-    {'name': 'Новокузнецк', 'lat': 53.7596, 'lon': 87.1216},
-    {'name': 'Рязань', 'lat': 54.6294, 'lon': 39.7358},
-    {'name': 'Томск', 'lat': 56.4884, 'lon': 84.9517},
-    {'name': 'Пенза', 'lat': 53.1959, 'lon': 45.0182},
-    {'name': 'Липецк', 'lat': 52.6086, 'lon': 39.5994},
-    {'name': 'Киров', 'lat': 58.6036, 'lon': 49.6681},
-    {'name': 'Чебоксары', 'lat': 56.1398, 'lon': 47.2966},
-    {'name': 'Калининград', 'lat': 54.7104, 'lon': 20.4522},
-    {'name': 'Тула', 'lat': 54.1931, 'lon': 37.6175},
-    {'name': 'Сочи', 'lat': 43.5855, 'lon': 39.7231},
-    {'name': 'Севастополь', 'lat': 44.6166, 'lon': 33.5254},
-    {'name': 'Симферополь', 'lat': 44.9521, 'lon': 34.1024}
+    {'name': 'Владивосток', 'lat': 43.1316, 'lon': 131.9238}
 ]
 
 OPEN_METEO_URL = "https://api.open-meteo.com/v1/forecast"
 
 def get_weather_from_api(lat, lon):
+    """Запрос к Open-Meteo с таймаутом 10 секунд"""
     params = {
         "latitude": lat,
         "longitude": lon,
@@ -64,8 +38,14 @@ def get_weather_from_api(lat, lon):
         "timezone": "auto",
         "forecast_days": 1
     }
-    resp = requests.get(OPEN_METEO_URL, params=params)
-    resp.raise_for_status()
+    try:
+        resp = requests.get(OPEN_METEO_URL, params=params, timeout=10)
+        resp.raise_for_status()
+    except requests.exceptions.Timeout:
+        raise Exception("Таймаут при запросе к Open-Meteo")
+    except requests.exceptions.RequestException as e:
+        raise Exception(f"Ошибка сети: {e}")
+
     data = resp.json()
     current = data.get("current_weather", {})
     hourly = data.get("hourly", {})
@@ -73,6 +53,7 @@ def get_weather_from_api(lat, lon):
     gust = hourly.get("wind_gusts_10m", [0])[0] if hourly.get("wind_gusts_10m") else 0
     humidity = hourly.get("relative_humidity_2m", [0])[0] if hourly.get("relative_humidity_2m") else 0
     weathercode = current.get("weathercode", 0)
+
     condition_map = {
         0: "Ясно", 1: "Преимущественно ясно", 2: "Переменная облачность", 3: "Пасмурно",
         45: "Туман", 48: "Туман с изморозью",
@@ -83,6 +64,7 @@ def get_weather_from_api(lat, lon):
     }
     condition_text = condition_map.get(weathercode, "Неизвестно")
     is_thunderstorm = weathercode in (95, 96, 99)
+
     return {
         "temp": current.get("temperature"),
         "wind_speed": current.get("windspeed"),
@@ -99,6 +81,7 @@ def calculate_risk(weather):
     gust = weather.get("gust", 0)
     precip = weather.get("precipitation", 0)
     is_thunder = weather.get("is_thunderstorm", False)
+
     if gust > 15:
         risk += 30
     elif wind_speed > 10:
@@ -112,6 +95,7 @@ def calculate_risk(weather):
     return min(risk, 100)
 
 def update_cache():
+    """Обновляет кеш для всех городов. Гарантирует создание cache.json даже при частичных ошибках."""
     cache = {}
     for city in CITIES:
         try:
@@ -124,27 +108,41 @@ def update_cache():
                 'risk': risk,
                 'updated_at': datetime.utcnow().isoformat()
             }
+            print(f"✅ {city['name']} обновлён")
         except Exception as e:
-            print(f"Ошибка для {city['name']}: {e}")
+            print(f"⚠️ Ошибка для {city['name']}: {e}")
+            # Пробуем загрузить старый кеш для этого города
             if os.path.exists(CACHE_FILE):
-                with open(CACHE_FILE, 'r') as f:
-                    old = json.load(f)
-                if city['name'] in old:
-                    cache[city['name']] = old[city['name']]
+                try:
+                    with open(CACHE_FILE, 'r') as f:
+                        old = json.load(f)
+                    if city['name'] in old:
+                        cache[city['name']] = old[city['name']]
+                        print(f"   Использую старый кеш для {city['name']}")
+                except Exception as load_err:
+                    print(f"   Не удалось загрузить старый кеш: {load_err}")
+            else:
+                print(f"   Старый кеш отсутствует, пропускаем {city['name']}")
+
+    # Сохраняем файл даже если он пустой (но у нас всегда будут данные для части городов)
     with open(CACHE_FILE, 'w') as f:
         json.dump(cache, f, indent=2, ensure_ascii=False)
-    print(f"[{datetime.utcnow().isoformat()}] Кеш обновлён")
+    print(f"[{datetime.utcnow().isoformat()}] Кеш обновлён (с возможными пропусками)")
 
+# ---------- Маршруты Flask ----------
 @app.route('/weather')
 def weather():
     lat = request.args.get('lat')
     lon = request.args.get('lon')
     if not lat or not lon:
         return jsonify({'error': 'Missing lat/lon'}), 400
+
     if not os.path.exists(CACHE_FILE):
         return jsonify({'error': 'Кеш ещё не готов'}), 503
+
     with open(CACHE_FILE, 'r') as f:
         cache = json.load(f)
+
     lat = float(lat)
     lon = float(lon)
     best = None
@@ -156,7 +154,8 @@ def weather():
         if dist < best_dist:
             best_dist = dist
             best = name
-    if best and best_dist < 0.5:
+
+    if best and best_dist < 0.5:  # ~50 км
         return jsonify(cache[best])
     else:
         return jsonify({'error': 'Ближайший город не найден'}), 404
@@ -167,5 +166,6 @@ def update_route():
     return jsonify({'status': 'ok'})
 
 if __name__ == '__main__':
+    # При старте сразу обновляем кеш (для локального запуска)
     update_cache()
     app.run(debug=False, host='0.0.0.0', port=5000)

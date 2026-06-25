@@ -1,0 +1,36 @@
+name: Weather Radar CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  schedule:
+    - cron: '*/30 * * * *'  # каждые 30 минут
+  workflow_dispatch:        # ручной запуск
+
+jobs:
+  deploy-and-update:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+    
+    - name: Update weather cache
+      run: |
+        python app.py  # запускаем обновление кеша
+        
+    - name: Commit and push cache
+      run: |
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git add cache.json
+        git commit -m "Update weather cache [skip ci]" || exit 0
+        git push

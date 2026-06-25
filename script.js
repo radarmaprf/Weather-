@@ -1,6 +1,5 @@
-// -------- Полный список городов России --------
+// -------- Полный список городов --------
 const cities = [
-    // Города-миллионники
     { name: 'Москва', lat: 55.7558, lon: 37.6173 },
     { name: 'Санкт-Петербург', lat: 59.9343, lon: 30.3351 },
     { name: 'Новосибирск', lat: 55.0084, lon: 82.9357 },
@@ -43,9 +42,6 @@ const cities = [
     { name: 'Симферополь', lat: 44.9521, lon: 34.1024 }
 ];
 
-// -------- Остальной код (без изменений) --------
-// ... (весь остальной код остаётся таким же, как в вашем рабочем скрипте)
-
 // -------- Инициализация карты --------
 const map = L.map('map').setView([64, 90], 4);
 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
@@ -68,6 +64,27 @@ map.on('click', (e) => {
     fetchWeather(lat, lng, `Точка ${lat.toFixed(2)}, ${lng.toFixed(2)}`);
 });
 
+// -------- Тепловая карта (будет создана после загрузки кеша) --------
+let heatLayer = null;
+
+async function updateHeatMap() {
+    try {
+        const resp = await fetch('cache.json?t=' + Date.now());
+        const cache = await resp.json();
+        const points = Object.values(cache).map(city => [city.lat, city.lon, city.risk / 100]);
+        if (heatLayer) map.removeLayer(heatLayer);
+        heatLayer = L.heatLayer(points, {
+            radius: 30,
+            blur: 15,
+            maxZoom: 10,
+            gradient: {0.4: 'blue', 0.6: 'yellow', 0.8: 'orange', 1.0: 'red'}
+        });
+        heatLayer.addTo(map);
+    } catch (e) {
+        console.warn('Тепловая карта не загружена', e);
+    }
+}
+
 // -------- Панель информации --------
 const panel = document.getElementById('info-panel');
 const closeBtn = document.getElementById('close-panel');
@@ -81,77 +98,51 @@ const riskFill = document.getElementById('risk-fill');
 const riskPercent = document.getElementById('risk-percent');
 const riskLabel = document.getElementById('risk-label');
 const selectedCitySpan = document.getElementById('selected-city');
+const weatherIcon = document.getElementById('weather-icon');
+const favoriteBtn = document.getElementById('favorite-btn');
+const favoritesToggle = document.getElementById('favorites-toggle');
 
 closeBtn.addEventListener('click', () => panel.classList.remove('visible'));
 
-// -------- Запрос погоды (абсолютный путь) --------
-async function fetchWeather(lat, lon, name) {
-    try {
-        // Абсолютный путь от корня домена
-        const url = '/Weather-/cache.json';
-        console.log('Загружаю:', window.location.origin + url);
+// -------- Избранное (localStorage) --------
+let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
 
-        const resp = await fetch(url, {
-            cache: 'no-store',
-            headers: { 'Cache-Control': 'no-cache' }
-        });
-        if (!resp.ok) {
-            throw new Error(`HTTP ${resp.status} – ${resp.statusText}`);
-        }
-        const cache = await resp.json();
+function saveFavorites() {
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+}
 
-        // Ищем ближайший город
-        let best = null;
-        let bestDist = Infinity;
-        for (const [cityName, data] of Object.entries(cache)) {
-            const dlat = data.lat - lat;
-            const dlon = data.lon - lon;
-            const dist = dlat*dlat + dlon*dlon;
-            if (dist < bestDist) {
-                bestDist = dist;
-                best = { name: cityName, ...data };
-            }
-        }
+function toggleFavorite(cityName) {
+    const idx = favorites.indexOf(cityName);
+    if (idx === -1) favorites.push(cityName);
+    else favorites.splice(idx, 1);
+    saveFavorites();
+    updateFavoriteButton(cityName);
+}
 
-        if (!best || bestDist > 0.5) {
-            alert('Город не найден в кеше (попробуйте выбрать другой)');
-            return;
-        }
-
-        // Заполняем панель
-        cityName.textContent = name || best.name;
-        temp.textContent = best.weather.temp !== undefined ? best.weather.temp + '°C' : '--';
-        wind.textContent = best.weather.wind_speed !== undefined ? best.weather.wind_speed + ' м/с' : '--';
-        gust.textContent = best.weather.gust !== undefined ? best.weather.gust + ' м/с' : '--';
-        precip.textContent = best.weather.precipitation !== undefined ? best.weather.precipitation + ' мм' : '--';
-        condition.textContent = best.weather.condition || '--';
-
-        const risk = best.risk || 0;
-        riskFill.style.width = risk + '%';
-        riskPercent.textContent = risk + '%';
-
-        if (risk >= 70) {
-            riskLabel.textContent = '🔴 ВЫСОКИЙ РИСК (торнадо/шторм)';
-            riskLabel.style.color = '#ff5252';
-        } else if (risk >= 40) {
-            riskLabel.textContent = '🟡 СРЕДНИЙ РИСК (гроза, ливень)';
-            riskLabel.style.color = '#ffd740';
-        } else if (risk >= 20) {
-            riskLabel.textContent = '🟢 НИЗКИЙ РИСК (дождь, ветер)';
-            riskLabel.style.color = '#69f0ae';
-        } else {
-            riskLabel.textContent = '✅ БЕЗОПАСНО';
-            riskLabel.style.color = '#4caf50';
-        }
-
-        selectedCitySpan.textContent = `📍 ${cityName.textContent}`;
-        panel.classList.add('visible');
-    } catch (err) {
-        alert('Не удалось загрузить данные: ' + err.message);
+function updateFavoriteButton(cityName) {
+    if (favorites.includes(cityName)) {
+        favoriteBtn.classList.add('active');
+        favoriteBtn.innerHTML = '<i class="fas fa-star"></i> Удалить из избранного';
+    } else {
+        favoriteBtn.classList.remove('active');
+        favoriteBtn.innerHTML = '<i class="fas fa-star"></i> В избранное';
     }
 }
 
-// -------- Поиск через Nominatim --------
+favoriteBtn.addEventListener('click', () => {
+    const currentCity = cityName.textContent;
+    if (currentCity && currentCity !== 'Город') {
+        toggleFavorite(currentCity);
+    }
+});
+
+favoritesToggle.addEventListener('click', () => {
+    const list = favorites.join(', ') || 'Нет избранных';
+    alert('Избранные города: ' + list);
+    // В будущем можно сделать выпадающий список с быстрым переходом
+});
+
+// -------- Поиск города --------
 const searchInput = document.getElementById('search-input');
 const searchBtn = document.getElementById('search-btn');
 
@@ -184,12 +175,245 @@ searchBtn.addEventListener('click', async () => {
         fetchWeather(result.lat, result.lon, result.name);
     }
 });
-
 searchInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') searchBtn.click();
 });
 
-// -------- По умолчанию Москва --------
-window.onload = () => {
-    fetchWeather(55.7558, 37.6173, 'Москва');
+// -------- Функция получения погоды (основная) --------
+async function fetchWeather(lat, lon, name) {
+    try {
+        // Загружаем кеш
+        const resp = await fetch('cache.json?t=' + Date.now());
+        if (!resp.ok) throw new Error('Кеш не найден');
+        const cache = await resp.json();
+
+        // Ищем ближайший город
+        let best = null;
+        let bestDist = Infinity;
+        for (const [cityName, data] of Object.entries(cache)) {
+            const dlat = data.lat - lat;
+            const dlon = data.lon - lon;
+            const dist = dlat*dlat + dlon*dlon;
+            if (dist < bestDist) {
+                bestDist = dist;
+                best = { name: cityName, ...data };
+            }
+        }
+        if (!best || bestDist > 0.5) {
+            alert('Город не найден в кеше');
+            return;
+        }
+
+        // Отображаем данные
+        cityName.textContent = name || best.name;
+        const w = best.weather;
+        temp.textContent = w.temp !== undefined ? w.temp + '°C' : '--';
+        wind.textContent = w.wind_speed !== undefined ? w.wind_speed + ' м/с' : '--';
+        gust.textContent = w.gust !== undefined ? w.gust + ' м/с' : '--';
+        precip.textContent = w.precipitation !== undefined ? w.precipitation + ' мм' : '--';
+        condition.textContent = w.condition || '--';
+        weatherIcon.textContent = getWeatherEmoji(w.condition);
+
+        const risk = best.risk || 0;
+        riskFill.style.width = risk + '%';
+        riskPercent.textContent = risk + '%';
+        if (risk >= 70) {
+            riskLabel.textContent = '🔴 ВЫСОКИЙ РИСК (торнадо/шторм)';
+            riskLabel.style.color = '#ff5252';
+        } else if (risk >= 40) {
+            riskLabel.textContent = '🟡 СРЕДНИЙ РИСК (гроза, ливень)';
+            riskLabel.style.color = '#ffd740';
+        } else if (risk >= 20) {
+            riskLabel.textContent = '🟢 НИЗКИЙ РИСК (дождь, ветер)';
+            riskLabel.style.color = '#69f0ae';
+        } else {
+            riskLabel.textContent = '✅ БЕЗОПАСНО';
+            riskLabel.style.color = '#4caf50';
+        }
+
+        selectedCitySpan.textContent = `📍 ${cityName.textContent}`;
+        panel.classList.add('visible');
+
+        // Обновляем кнопку избранного
+        updateFavoriteButton(cityName.textContent);
+
+        // Загружаем прогнозы
+        await loadHourlyForecast(lat, lon);
+        await load7DayForecast(lat, lon);
+
+    } catch (err) {
+        alert('Не удалось загрузить данные: ' + err.message);
+    }
+}
+
+// -------- Эмодзи погоды --------
+function getWeatherEmoji(condition) {
+    const map = {
+        'Ясно': '☀️',
+        'Преимущественно ясно': '🌤️',
+        'Переменная облачность': '⛅',
+        'Пасмурно': '☁️',
+        'Туман': '🌫️',
+        'Туман с изморозью': '🌫️',
+        'Морось слабая': '🌦️',
+        'Морось умеренная': '🌧️',
+        'Морось сильная': '🌧️',
+        'Дождь слабый': '🌧️',
+        'Дождь умеренный': '🌧️',
+        'Дождь сильный': '🌧️',
+        'Ливень слабый': '🌧️',
+        'Ливень умеренный': '🌧️',
+        'Ливень сильный': '🌧️',
+        'Гроза слабая/умеренная': '⛈️',
+        'Гроза с градом слабая/умеренная': '⛈️',
+        'Гроза с градом сильная': '⛈️'
+    };
+    return map[condition] || '🌥️';
+}
+
+// -------- Прогноз по часам --------
+async function loadHourlyForecast(lat, lon) {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,weathercode&timezone=auto&forecast_days=1`;
+    try {
+        const resp = await fetch(url);
+        const data = await resp.json();
+        const hourly = data.hourly;
+        const times = hourly.time.slice(0, 12); // ближайшие 12 часов
+        const temps = hourly.temperature_2m.slice(0, 12);
+        const codes = hourly.weathercode.slice(0, 12);
+
+        const container = document.getElementById('hourly-scroll');
+        container.innerHTML = '';
+        times.forEach((t, i) => {
+            const time = t.slice(11, 16);
+            const temp = temps[i];
+            const emoji = getWeatherEmojiByCode(codes[i]);
+            const div = document.createElement('div');
+            div.className = 'hourly-item';
+            div.innerHTML = `
+                <div class="hourly-time">${time}</div>
+                <div class="hourly-icon">${emoji}</div>
+                <div class="hourly-temp">${temp}°</div>
+            `;
+            container.appendChild(div);
+        });
+        document.getElementById('hourly-forecast').style.display = 'block';
+    } catch (e) {
+        console.warn('Почасовой прогноз не загружен', e);
+    }
+}
+
+function getWeatherEmojiByCode(code) {
+    const map = {
+        0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️',
+        45: '🌫️', 48: '🌫️',
+        51: '🌦️', 53: '🌧️', 55: '🌧️',
+        61: '🌧️', 63: '🌧️', 65: '🌧️',
+        80: '🌧️', 81: '🌧️', 82: '🌧️',
+        95: '⛈️', 96: '⛈️', 99: '⛈️'
+    };
+    return map[code] || '🌥️';
+}
+
+// -------- Прогноз на 7 дней (график) --------
+let chartInstance = null;
+
+async function load7DayForecast(lat, lon) {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=auto&forecast_days=7`;
+    try {
+        const resp = await fetch(url);
+        const data = await resp.json();
+        const daily = data.daily;
+        const labels = daily.time.map(t => t.slice(5, 10));
+        const maxTemps = daily.temperature_2m_max;
+        const minTemps = daily.temperature_2m_min;
+
+        const ctx = document.getElementById('chartCanvas').getContext('2d');
+        if (chartInstance) chartInstance.destroy();
+
+        chartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Макс. °C',
+                        data: maxTemps,
+                        borderColor: '#ffb347',
+                        backgroundColor: 'rgba(255,179,71,0.1)',
+                        tension: 0.3,
+                        fill: true,
+                        pointBackgroundColor: '#ffb347'
+                    },
+                    {
+                        label: 'Мин. °C',
+                        data: minTemps,
+                        borderColor: '#4fc3f7',
+                        backgroundColor: 'rgba(79,195,247,0.1)',
+                        tension: 0.3,
+                        fill: true,
+                        pointBackgroundColor: '#4fc3f7'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: { color: '#e0e0e0', font: { size: 10 } }
+                    }
+                },
+                scales: {
+                    x: { ticks: { color: '#e0e0e0', font: { size: 10 } } },
+                    y: { ticks: { color: '#e0e0e0', font: { size: 10 } } }
+                }
+            }
+        });
+        document.getElementById('forecast-chart').style.display = 'block';
+    } catch (e) {
+        console.warn('Прогноз на 7 дней не загружен', e);
+    }
+}
+
+// -------- Автообновление (каждые 5 минут) --------
+let autoUpdateInterval = null;
+
+function startAutoUpdate() {
+    if (autoUpdateInterval) clearInterval(autoUpdateInterval);
+    autoUpdateInterval = setInterval(() => {
+        // Обновляем тепловую карту и, если панель открыта, перезагружаем текущий город
+        updateHeatMap();
+        const currentCity = cityName.textContent;
+        if (currentCity && currentCity !== 'Город' && currentCity !== 'Выберите город на карте') {
+            // Найдём координаты города в кеше и обновим
+            // проще перезапросить по имени, но у нас нет координат, поэтому используем последние lat/lon
+            // Мы сохраним последние координаты в глобальной переменной
+            if (window._lastLat && window._lastLon) {
+                fetchWeather(window._lastLat, window._lastLon, currentCity);
+            }
+        }
+    }, 300000); // 5 минут
+}
+
+// -------- Загрузка при старте --------
+window.onload = async () => {
+    await updateHeatMap();
+    startAutoUpdate();
+    // По умолчанию Москва
+    const defaultCity = cities.find(c => c.name === 'Москва');
+    if (defaultCity) {
+        window._lastLat = defaultCity.lat;
+        window._lastLon = defaultCity.lon;
+        fetchWeather(defaultCity.lat, defaultCity.lon, 'Москва');
+    }
+};
+
+// Сохраняем последние координаты для автообновления
+// Переопределим fetchWeather, чтобы запоминать lat/lon
+const originalFetch = fetchWeather;
+fetchWeather = async function(lat, lon, name) {
+    window._lastLat = lat;
+    window._lastLon = lon;
+    await originalFetch(lat, lon, name);
 };

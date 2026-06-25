@@ -53,18 +53,16 @@ const selectedCitySpan = document.getElementById('selected-city');
 
 closeBtn.addEventListener('click', () => panel.classList.remove('visible'));
 
-// -------- Функция загрузки с автоматическим определением пути --------
+// -------- Запрос погоды (абсолютный путь) --------
 async function fetchWeather(lat, lon, name) {
     try {
-        // Определяем базовый путь: если мы на странице вида /Weather-/, то файл рядом
-        const basePath = window.location.pathname.endsWith('/') ? window.location.pathname : window.location.pathname + '/';
-        // Просто используем относительный путь
-        const url = 'cache.json';
-        console.log('Загружаю:', window.location.origin + basePath + url);
+        // Абсолютный путь от корня домена
+        const url = '/Weather-/cache.json';
+        console.log('Загружаю:', window.location.origin + url);
 
         const resp = await fetch(url, {
             cache: 'no-store',
-            headers: { 'Pragma': 'no-cache' }
+            headers: { 'Cache-Control': 'no-cache' }
         });
         if (!resp.ok) {
             throw new Error(`HTTP ${resp.status} – ${resp.statusText}`);

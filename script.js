@@ -284,7 +284,6 @@ async function loadHourlyForecast(lat, lon) {
             const emoji = getWeatherEmojiByCode(codes[i]);
             const speed = windSpeeds[i];
             const dir = windDirs[i];
-            const arrow = '↑';
             const div = document.createElement('div');
             div.className = 'hourly-item';
             div.innerHTML = `
@@ -326,12 +325,37 @@ let radarData = null;
 async function fetchRadarData() {
     try {
         const resp = await fetch('https://api.rainviewer.com/public/weather-maps.json');
-        if (!resp.ok) throw new Error('RainViewer API error');
-        radarData = await resp.json();
-        radarFrames = radarData.slice(0, 8).reverse();
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+        // Определяем массив кадров
+        let frames = null;
+        if (Array.isArray(data)) {
+            frames = data;
+        } else if (data.radar && Array.isArray(data.radar)) {
+            frames = data.radar;
+        } else if (data.hosts && data.radar) {
+            frames = data.radar;
+        } else {
+            // Ищем первый массив, содержащий объекты с path
+            for (const key of Object.keys(data)) {
+                if (Array.isArray(data[key]) && data[key].length > 0 && data[key][0].path) {
+                    frames = data[key];
+                    break;
+                }
+            }
+        }
+        if (!frames || frames.length === 0) {
+            console.warn('RainViewer: пустой ответ');
+            return false;
+        }
+        // Сортируем по времени (от старых к новым)
+        frames.sort((a, b) => (a.time || 0) - (b.time || 0));
+        // Берём последние 8 кадров
+        radarFrames = frames.slice(-8);
+        radarData = data;
         return true;
     } catch (e) {
-        console.warn('Радар не загружен:', e);
+        console.error('RainViewer ошибка:', e);
         return false;
     }
 }
@@ -339,6 +363,9 @@ async function fetchRadarData() {
 function createRadarLayer(frameIndex) {
     if (!radarFrames.length) return null;
     const frame = radarFrames[frameIndex % radarFrames.length];
+    // Проверяем, что path есть
+    if (!frame.path) return null;
+    // Используем зеркало tilecache.rainviewer.com
     const url = `https://tilecache.rainviewer.com${frame.path}/512/{z}/{x}/{y}/2/1_1.png`;
     return L.tileLayer(url, {
         opacity: 0.6,
@@ -386,24 +413,35 @@ async function toggleRadar() {
         radarEnabled = false;
         btn.classList.remove('radar-active');
         btn.innerHTML = '<i class="fas fa-cloud-rain"></i> Радар';
-    } else {
-        btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Загрузка...';
-        btn.disabled = true;
-        if (!radarData || Date.now() - (radarData._timestamp || 0) > 600000) {
-            await fetchRadarData();
-            if (radarData) radarData._timestamp = Date.now();
-        }
-        if (radarFrames.length) {
-            startRadarAnimation();
-            radarEnabled = true;
-            btn.classList.add('radar-active');
-            btn.innerHTML = '<i class="fas fa-cloud-rain"></i> Радар';
-        } else {
-            alert('Не удалось загрузить радар. Попробуйте позже.');
-            btn.innerHTML = '<i class="fas fa-cloud-rain"></i> Радар';
-        }
-        btn.disabled = false;
+        return;
     }
+
+    btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Загрузка...';
+    btn.disabled = true;
+
+    // Если данные устарели или отсутствуют, загружаем
+    if (!radarData || Date.now() - (radarData._timestamp || 0) > 600000) {
+        const ok = await fetchRadarData();
+        if (ok && radarData) {
+            radarData._timestamp = Date.now();
+        } else {
+            alert('Не удалось загрузить данные радара. Попробуйте позже.');
+            btn.innerHTML = '<i class="fas fa-cloud-rain"></i> Радар';
+            btn.disabled = false;
+            return;
+        }
+    }
+
+    if (radarFrames.length) {
+        startRadarAnimation();
+        radarEnabled = true;
+        btn.classList.add('radar-active');
+        btn.innerHTML = '<i class="fas fa-cloud-rain"></i> Радар';
+    } else {
+        alert('Нет доступных кадров радара. Попробуйте позже.');
+        btn.innerHTML = '<i class="fas fa-cloud-rain"></i> Радар';
+    }
+    btn.disabled = false;
 }
 
 document.getElementById('radar-toggle').addEventListener('click', toggleRadar);
@@ -434,8 +472,11 @@ window.onload = async () => {
         window._lastLon = defaultCity.lon;
         fetchWeather(defaultCity.lat, defaultCity.lon, 'Москва');
     }
-    // Предзагрузка радара
-    fetchRadarData().then(() => { console.log('Радар данные загружены'); });
+    // Предзагрузка радара в фоне
+    fetchRadarData().then(ok => {
+        if (ok) console.log('Радар данные загружены');
+        else console.warn('Радар не загружен, но сайт работает');
+    });
 };
 
 // Сохраняем координаты для автообновления

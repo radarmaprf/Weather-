@@ -44,11 +44,21 @@ const cities = [
 
 // -------- Инициализация карты --------
 const map = L.map('map').setView([64, 90], 4);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+
+// СВЕТЛАЯ КАРТА (CartoDB Light)
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; CartoDB',
     subdomains: 'abcd',
     maxZoom: 19
 }).addTo(map);
+
+// Альтернативный вариант (стандартный OpenStreetMap) – раскомментируйте, если хотите использовать его вместо CartoDB
+/*
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    maxZoom: 19
+}).addTo(map);
+*/
 
 // -------- Маркеры --------
 let markers = {};
@@ -64,7 +74,7 @@ map.on('click', (e) => {
     fetchWeather(lat, lng, `Точка ${lat.toFixed(2)}, ${lng.toFixed(2)}`);
 });
 
-// -------- Тепловая карта (будет создана после загрузки кеша) --------
+// -------- Тепловая карта --------
 let heatLayer = null;
 
 async function updateHeatMap() {
@@ -122,10 +132,10 @@ function toggleFavorite(cityName) {
 function updateFavoriteButton(cityName) {
     if (favorites.includes(cityName)) {
         favoriteBtn.classList.add('active');
-        favoriteBtn.innerHTML = '<i class="fas fa-star"></i> Удалить из избранного';
+        favoriteBtn.innerHTML = '<i class="fas fa-star"></i>';
     } else {
         favoriteBtn.classList.remove('active');
-        favoriteBtn.innerHTML = '<i class="fas fa-star"></i> В избранное';
+        favoriteBtn.innerHTML = '<i class="fas fa-star"></i>';
     }
 }
 
@@ -139,10 +149,9 @@ favoriteBtn.addEventListener('click', () => {
 favoritesToggle.addEventListener('click', () => {
     const list = favorites.join(', ') || 'Нет избранных';
     alert('Избранные города: ' + list);
-    // В будущем можно сделать выпадающий список с быстрым переходом
 });
 
-// -------- Поиск города --------
+// -------- Поиск --------
 const searchInput = document.getElementById('search-input');
 const searchBtn = document.getElementById('search-btn');
 
@@ -179,15 +188,13 @@ searchInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') searchBtn.click();
 });
 
-// -------- Функция получения погоды (основная) --------
+// -------- Основная функция получения погоды --------
 async function fetchWeather(lat, lon, name) {
     try {
-        // Загружаем кеш
         const resp = await fetch('cache.json?t=' + Date.now());
         if (!resp.ok) throw new Error('Кеш не найден');
         const cache = await resp.json();
 
-        // Ищем ближайший город
         let best = null;
         let bestDist = Infinity;
         for (const [cityName, data] of Object.entries(cache)) {
@@ -204,7 +211,6 @@ async function fetchWeather(lat, lon, name) {
             return;
         }
 
-        // Отображаем данные
         cityName.textContent = name || best.name;
         const w = best.weather;
         temp.textContent = w.temp !== undefined ? w.temp + '°C' : '--';
@@ -233,11 +239,8 @@ async function fetchWeather(lat, lon, name) {
 
         selectedCitySpan.textContent = `📍 ${cityName.textContent}`;
         panel.classList.add('visible');
-
-        // Обновляем кнопку избранного
         updateFavoriteButton(cityName.textContent);
 
-        // Загружаем прогнозы
         await loadHourlyForecast(lat, lon);
         await load7DayForecast(lat, lon);
 
@@ -246,7 +249,7 @@ async function fetchWeather(lat, lon, name) {
     }
 }
 
-// -------- Эмодзи погоды --------
+// -------- Эмодзи --------
 function getWeatherEmoji(condition) {
     const map = {
         'Ясно': '☀️',
@@ -271,14 +274,14 @@ function getWeatherEmoji(condition) {
     return map[condition] || '🌥️';
 }
 
-// -------- Прогноз по часам --------
+// -------- Почасовой прогноз --------
 async function loadHourlyForecast(lat, lon) {
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,weathercode&timezone=auto&forecast_days=1`;
     try {
         const resp = await fetch(url);
         const data = await resp.json();
         const hourly = data.hourly;
-        const times = hourly.time.slice(0, 12); // ближайшие 12 часов
+        const times = hourly.time.slice(0, 12);
         const temps = hourly.temperature_2m.slice(0, 12);
         const codes = hourly.weathercode.slice(0, 12);
 
@@ -315,7 +318,7 @@ function getWeatherEmojiByCode(code) {
     return map[code] || '🌥️';
 }
 
-// -------- Прогноз на 7 дней (график) --------
+// -------- Прогноз на 7 дней --------
 let chartInstance = null;
 
 async function load7DayForecast(lat, lon) {
@@ -376,31 +379,26 @@ async function load7DayForecast(lat, lon) {
     }
 }
 
-// -------- Автообновление (каждые 5 минут) --------
+// -------- Автообновление --------
 let autoUpdateInterval = null;
 
 function startAutoUpdate() {
     if (autoUpdateInterval) clearInterval(autoUpdateInterval);
     autoUpdateInterval = setInterval(() => {
-        // Обновляем тепловую карту и, если панель открыта, перезагружаем текущий город
         updateHeatMap();
         const currentCity = cityName.textContent;
         if (currentCity && currentCity !== 'Город' && currentCity !== 'Выберите город на карте') {
-            // Найдём координаты города в кеше и обновим
-            // проще перезапросить по имени, но у нас нет координат, поэтому используем последние lat/lon
-            // Мы сохраним последние координаты в глобальной переменной
             if (window._lastLat && window._lastLon) {
                 fetchWeather(window._lastLat, window._lastLon, currentCity);
             }
         }
-    }, 300000); // 5 минут
+    }, 300000);
 }
 
-// -------- Загрузка при старте --------
+// -------- Загрузка --------
 window.onload = async () => {
     await updateHeatMap();
     startAutoUpdate();
-    // По умолчанию Москва
     const defaultCity = cities.find(c => c.name === 'Москва');
     if (defaultCity) {
         window._lastLat = defaultCity.lat;
@@ -409,8 +407,7 @@ window.onload = async () => {
     }
 };
 
-// Сохраняем последние координаты для автообновления
-// Переопределим fetchWeather, чтобы запоминать lat/lon
+// Сохраняем координаты для автообновления
 const originalFetch = fetchWeather;
 fetchWeather = async function(lat, lon, name) {
     window._lastLat = lat;

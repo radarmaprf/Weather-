@@ -1,7 +1,7 @@
 import os
 import json
 import requests
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from datetime import datetime
 import threading
 import time
@@ -11,9 +11,8 @@ app = Flask(__name__)
 # Путь к файлу кеша
 CACHE_FILE = '/app/data/cache.json'
 
-# Список городов (можно расширять, но они будут автоматически добавляться при запросе новых)
-# Здесь оставляем только начальный список для первого заполнения
-INITIAL_CITIES = [
+# Список городов (можно расширять)
+CITIES = [
     {'name': 'Москва', 'lat': 55.7558, 'lon': 37.6173},
     {'name': 'Санкт-Петербург', 'lat': 59.9343, 'lon': 30.3351},
     {'name': 'Новосибирск', 'lat': 55.0084, 'lon': 82.9357},
@@ -58,8 +57,8 @@ INITIAL_CITIES = [
 
 OPEN_METEO_URL = "https://api.open-meteo.com/v1/forecast"
 
+# ---------- Функции работы с погодой ----------
 def get_weather_from_api(lat, lon):
-    """Запрос к Open-Meteo (возвращает словарь с погодой)"""
     params = {
         "latitude": lat,
         "longitude": lon,
@@ -73,7 +72,6 @@ def get_weather_from_api(lat, lon):
     data = resp.json()
     current = data.get("current_weather", {})
     hourly = data.get("hourly", {})
-    # Берём первый час (0)
     precip = hourly.get("precipitation", [0])[0] if hourly.get("precipitation") else 0
     gust = hourly.get("wind_gusts_10m", [0])[0] if hourly.get("wind_gusts_10m") else 0
     humidity = hourly.get("relative_humidity_2m", [0])[0] if hourly.get("relative_humidity_2m") else 0
@@ -88,7 +86,6 @@ def get_weather_from_api(lat, lon):
     }
     condition_text = condition_map.get(weathercode, "Неизвестно")
     is_thunderstorm = weathercode in (95, 96, 99)
-
     return {
         "temp": current.get("temperature"),
         "wind_speed": current.get("windspeed"),
@@ -117,117 +114,73 @@ def calculate_risk(weather):
         risk += 20
     return min(risk, 100)
 
-def load_cache():
-    """Загружает кеш из файла, если он есть, иначе возвращает пустой словарь"""
-    if os.path.exists(CACHE_FILE):
-        with open(CACHE_FILE, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    return {}
-
-def save_cache(cache):
-    """Сохраняет кеш в файл"""
-    os.makedirs(os.path.dirname(CACHE_FILE), exist_ok=True)
-    with open(CACHE_FILE, 'w', encoding='utf-8') as f:
-        json.dump(cache, f, indent=2, ensure_ascii=False)
-
 def update_cache():
-    """Обновляет кеш для всех городов из INITIAL_CITIES (и для тех, что уже есть в кеше)"""
-    # Загружаем текущий кеш
-    cache = load_cache()
-    # Собираем список городов для обновления: из INITIAL_CITIES и всех, что уже есть в кеше
-    cities_to_update = {}
-    for city in INITIAL_CITIES:
-        cities_to_update[city['name']] = city
-    # Добавляем города из кеша, которых нет в INITIAL_CITIES (пользователь мог запросить другой город)
-    for name, data in cache.items():
-        if name not in cities_to_update:
-            cities_to_update[name] = {'name': name, 'lat': data['lat'], 'lon': data['lon']}
-    
-    # Обновляем каждый город
-    for name, city in cities_to_update.items():
+    """Обновляет кеш для всех городов"""
+    cache = {}
+    for city in CITIES:
         try:
             weather = get_weather_from_api(city['lat'], city['lon'])
             risk = calculate_risk(weather)
-            cache[name] = {
+            cache[city['name']] = {
                 'lat': city['lat'],
                 'lon': city['lon'],
                 'weather': weather,
                 'risk': risk,
                 'updated_at': datetime.utcnow().isoformat()
             }
-            print(f"[{datetime.utcnow().isoformat()}] Обновлён: {name}")
         except Exception as e:
-            print(f"[{datetime.utcnow().isoformat()}] Ошибка для {name}: {e}")
-            # Если город уже есть в кеше, оставляем старые данные
-            if name not in cache:
-                # Если его нет, создаём запись с ошибкой? Но лучше пропустить
-                pass
-    save_cache(cache)
-    print(f"[{datetime.utcnow().isoformat()}] Кеш полностью обновлён")
+            print(f"Ошибка для {city['name']}: {e}")
+            if os.path.exists(CACHE_FILE):
+                with open(CACHE_FILE, 'r') as f:
+                    old = json.load(f)
+                if city['name'] in old:
+                    cache[city['name']] = old[city['name']]
+    os.makedirs(os.path.dirname(CACHE_FILE), exist_ok=True)
+    with open(CACHE_FILE, 'w') as f:
+        json.dump(cache, f, indent=2, ensure_ascii=False)
+    print(f"[{datetime.utcnow().isoformat()}] Кеш обновлён")
+
+# ---------- Маршруты Flask ----------
+@app.route('/')
+def index():
+    """Главная страница"""
+    return render_template('index.html')
 
 @app.route('/weather')
 def weather():
-    """Возвращает погоду для города по названию или координатам"""
-    city_name = request.args.get('city')
+    """Возвращает погоду для города по координатам"""
     lat = request.args.get('lat')
     lon = request.args.get('lon')
-    
-    cache = load_cache()
-    if not cache:
+    if not lat or not lon:
+        return jsonify({'error': 'Missing lat/lon'}), 400
+    if not os.path.exists(CACHE_FILE):
         return jsonify({'error': 'Кеш ещё не готов, попробуйте позже'}), 503
-    
-    # Если передан city, ищем по названию (регистронезависимо)
-    if city_name:
-        # Ищем без учёта регистра
-        for name, data in cache.items():
-            if name.lower() == city_name.lower():
-                return jsonify(data)
-        return jsonify({'error': 'Город не найден в кеше'}), 404
-    
-    # Иначе ищем по координатам (приблизительно)
-    if lat and lon:
-        lat = float(lat)
-        lon = float(lon)
-        best = None
-        best_dist = float('inf')
-        for name, data in cache.items():
-            dlat = data['lat'] - lat
-            dlon = data['lon'] - lon
-            dist = dlat*dlat + dlon*dlon
-            if dist < best_dist:
-                best_dist = dist
-                best = name
-        # Если расстояние меньше 0.5 (~50 км) – возвращаем
-        if best and best_dist < 0.5:
-            return jsonify(cache[best])
-        else:
-            # Если город не найден в кеше, пытаемся запросить с API и добавить в кеш
-            try:
-                weather = get_weather_from_api(lat, lon)
-                risk = calculate_risk(weather)
-                # Сформируем имя по координатам
-                name = f"{lat:.2f},{lon:.2f}"
-                new_data = {
-                    'lat': lat,
-                    'lon': lon,
-                    'weather': weather,
-                    'risk': risk,
-                    'updated_at': datetime.utcnow().isoformat()
-                }
-                cache[name] = new_data
-                save_cache(cache)
-                return jsonify(new_data)
-            except Exception as e:
-                return jsonify({'error': f'Не удалось получить данные для этих координат: {str(e)}'}), 500
-    return jsonify({'error': 'Необходимо указать city или lat+lon'}), 400
+    with open(CACHE_FILE, 'r') as f:
+        cache = json.load(f)
+    # Ищем ближайший город по координатам (приблизительно)
+    lat = float(lat)
+    lon = float(lon)
+    best = None
+    best_dist = float('inf')
+    for name, data in cache.items():
+        dlat = data['lat'] - lat
+        dlon = data['lon'] - lon
+        dist = dlat*dlat + dlon*dlon
+        if dist < best_dist:
+            best_dist = dist
+            best = name
+    if best and best_dist < 0.5:  # ~50 км
+        return jsonify(cache[best])
+    else:
+        return jsonify({'error': 'Ближайший город не найден'}), 404
 
 @app.route('/update', methods=['POST'])
 def update_route():
-    """Эндпоинт для ручного или cron-обновления кеша"""
+    """Эндпоинт для обновления кеша (вызывается cron-job.org)"""
     update_cache()
-    return jsonify({'status': 'ok', 'message': 'Кеш обновлён'})
+    return jsonify({'status': 'ok'})
 
 if __name__ == '__main__':
-    # При старте сразу обновим кеш
+    # При старте сразу обновляем кеш
     update_cache()
     app.run(debug=False, host='0.0.0.0', port=5000)

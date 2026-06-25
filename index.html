@@ -4,9 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Радар погоды России — Риск торнадо и штормов</title>
+    <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="style.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Leaflet.heat -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.heat/0.2.0/leaflet-heat.js"></script>
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Наши стили -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="app">
@@ -15,20 +22,28 @@
                 <i class="fas fa-cloud-sun-rain"></i>
                 <h1>Радар ⚡ Россия</h1>
             </div>
+            <div class="header-controls">
+                <div class="search-container">
+                    <input type="text" id="search-input" placeholder="Введите город..." />
+                    <button id="search-btn"><i class="fas fa-search"></i></button>
+                </div>
+                <button id="favorites-toggle" class="fav-btn"><i class="fas fa-star"></i> Избранное</button>
+            </div>
             <div class="header-info">
                 <span id="selected-city">Выберите город на карте</span>
             </div>
-            <div class="search-container">
-                <input type="text" id="search-input" placeholder="Введите город..." />
-                <button id="search-btn"><i class="fas fa-search"></i></button>
-            </div>
         </header>
+
         <div id="map"></div>
+
         <div id="info-panel" class="hidden">
             <div class="close-btn" id="close-panel"><i class="fas fa-times"></i></div>
             <h2 id="city-name">Город</h2>
+            <div class="weather-main">
+                <div class="weather-icon" id="weather-icon">☀️</div>
+                <div class="weather-temp" id="temp">--°C</div>
+            </div>
             <div class="weather-details">
-                <div class="detail"><i class="fas fa-thermometer-half"></i> <span id="temp">--°C</span></div>
                 <div class="detail"><i class="fas fa-wind"></i> <span id="wind">-- м/с</span></div>
                 <div class="detail"><i class="fas fa-gust"></i> <span id="gust">-- м/с</span></div>
                 <div class="detail"><i class="fas fa-tint"></i> <span id="precip">-- мм</span></div>
@@ -42,9 +57,27 @@
                 <span id="risk-percent">0%</span>
             </div>
             <div id="risk-label">Безопасно</div>
+
+            <!-- Прогноз по часам -->
+            <div id="hourly-forecast" style="display:none; margin-top:15px;">
+                <h4>Прогноз на сегодня</h4>
+                <div id="hourly-scroll" style="display:flex; overflow-x:auto; gap:10px; padding:5px 0;"></div>
+            </div>
+
+            <!-- График на 7 дней -->
+            <div id="forecast-chart" style="display:none; margin-top:15px;">
+                <h4>Прогноз на 7 дней</h4>
+                <canvas id="chartCanvas" height="150"></canvas>
+            </div>
+
+            <!-- Кнопка избранного -->
+            <button id="favorite-btn" class="fav-btn" style="margin-top:15px; width:100%;"><i class="fas fa-star"></i> В избранное</button>
         </div>
     </div>
+
+    <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Наш скрипт -->
     <script src="script.js"></script>
 </body>
 </html>

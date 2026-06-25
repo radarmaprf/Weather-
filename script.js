@@ -53,15 +53,16 @@ const selectedCitySpan = document.getElementById('selected-city');
 
 closeBtn.addEventListener('click', () => panel.classList.remove('visible'));
 
-// -------- Запрос погоды (загрузка cache.json) --------
+// -------- Запрос погоды (без параметра, с отключением кеша) --------
 async function fetchWeather(lat, lon, name) {
     try {
-        // Формируем URL: используем полный путь к репозиторию + параметр для обхода кеша
-        const base = window.location.origin + '/Weather-';
-        const url = base + 'cache.json?t=' + Date.now();
-        console.log('Загружаю:', url); // для отладки
+        // Используем относительный путь – так надёжнее
+        const url = 'cache.json';
+        console.log('Загружаю:', window.location.origin + window.location.pathname + url);
 
-        const resp = await fetch(url);
+        const resp = await fetch(url, {
+            cache: 'no-store'  // отключаем кеширование браузера
+        });
         if (!resp.ok) {
             throw new Error(`HTTP ${resp.status} – ${resp.statusText}`);
         }

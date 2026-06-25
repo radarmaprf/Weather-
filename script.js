@@ -53,15 +53,21 @@ const selectedCitySpan = document.getElementById('selected-city');
 
 closeBtn.addEventListener('click', () => panel.classList.remove('visible'));
 
-// -------- Запрос погоды (загрузка cache.json с текущего домена) --------
+// -------- Запрос погоды (загрузка cache.json) --------
 async function fetchWeather(lat, lon, name) {
     try {
-        // Загружаем cache.json из той же папки, где лежит index.html
-        const resp = await fetch('cache.json');
-        if (!resp.ok) throw new Error('Файл cache.json не найден');
+        // Формируем URL: используем полный путь к репозиторию + параметр для обхода кеша
+        const base = window.location.origin + '/Weather-';
+        const url = base + 'cache.json?t=' + Date.now();
+        console.log('Загружаю:', url); // для отладки
+
+        const resp = await fetch(url);
+        if (!resp.ok) {
+            throw new Error(`HTTP ${resp.status} – ${resp.statusText}`);
+        }
         const cache = await resp.json();
 
-        // Ищем ближайший город по координатам
+        // Ищем ближайший город
         let best = null;
         let bestDist = Infinity;
         for (const [cityName, data] of Object.entries(cache)) {

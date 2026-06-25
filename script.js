@@ -263,14 +263,14 @@ function getWeatherEmoji(condition) {
     return map[condition] || '🌥️';
 }
 
-// -------- Почасовой прогноз с ветром (ВСЕ 24 ЧАСА) --------
+// -------- Почасовой прогноз с ветром (24 часа) --------
 async function loadHourlyForecast(lat, lon) {
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,weathercode,wind_speed_10m,wind_direction_10m&timezone=auto&forecast_days=1`;
     try {
         const resp = await fetch(url);
         const data = await resp.json();
         const hourly = data.hourly;
-        const times = hourly.time; // все 24 часа
+        const times = hourly.time;
         const temps = hourly.temperature_2m;
         const codes = hourly.weathercode;
         const windSpeeds = hourly.wind_speed_10m;
@@ -284,7 +284,7 @@ async function loadHourlyForecast(lat, lon) {
             const emoji = getWeatherEmojiByCode(codes[i]);
             const speed = windSpeeds[i];
             const dir = windDirs[i];
-            const arrow = getWindArrow(dir);
+            const arrow = '↑';
             const div = document.createElement('div');
             div.className = 'hourly-item';
             div.innerHTML = `
@@ -316,11 +316,97 @@ function getWeatherEmojiByCode(code) {
     return map[code] || '🌥️';
 }
 
-function getWindArrow(deg) {
-    if (deg === undefined || deg === null) return '?';
-    // возвращаем стрелку, повёрнутую на угол deg (0 = север)
-    return '↑';
+// -------- RainViewer (радар осадков) --------
+let radarLayer = null;
+let radarFrames = [];
+let radarInterval = null;
+let radarEnabled = false;
+let radarData = null;
+
+async function fetchRadarData() {
+    try {
+        const resp = await fetch('https://api.rainviewer.com/public/weather-maps.json');
+        if (!resp.ok) throw new Error('RainViewer API error');
+        radarData = await resp.json();
+        radarFrames = radarData.slice(0, 8).reverse();
+        return true;
+    } catch (e) {
+        console.warn('Радар не загружен:', e);
+        return false;
+    }
 }
+
+function createRadarLayer(frameIndex) {
+    if (!radarFrames.length) return null;
+    const frame = radarFrames[frameIndex % radarFrames.length];
+    const url = `https://tilecache.rainviewer.com${frame.path}/512/{z}/{x}/{y}/2/1_1.png`;
+    return L.tileLayer(url, {
+        opacity: 0.6,
+        zIndex: 1000,
+        attribution: '© RainViewer'
+    });
+}
+
+function startRadarAnimation() {
+    if (radarInterval) clearInterval(radarInterval);
+    let frameIdx = 0;
+    if (radarLayer) {
+        map.removeLayer(radarLayer);
+    }
+    radarLayer = createRadarLayer(frameIdx);
+    if (radarLayer) {
+        radarLayer.addTo(map);
+    }
+    radarInterval = setInterval(() => {
+        frameIdx = (frameIdx + 1) % radarFrames.length;
+        const newLayer = createRadarLayer(frameIdx);
+        if (newLayer && radarLayer) {
+            map.removeLayer(radarLayer);
+            radarLayer = newLayer;
+            radarLayer.addTo(map);
+        }
+    }, 500);
+}
+
+function stopRadarAnimation() {
+    if (radarInterval) {
+        clearInterval(radarInterval);
+        radarInterval = null;
+    }
+    if (radarLayer) {
+        map.removeLayer(radarLayer);
+        radarLayer = null;
+    }
+}
+
+async function toggleRadar() {
+    const btn = document.getElementById('radar-toggle');
+    if (radarEnabled) {
+        stopRadarAnimation();
+        radarEnabled = false;
+        btn.classList.remove('radar-active');
+        btn.innerHTML = '<i class="fas fa-cloud-rain"></i> Радар';
+    } else {
+        btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Загрузка...';
+        btn.disabled = true;
+        if (!radarData || Date.now() - (radarData._timestamp || 0) > 600000) {
+            await fetchRadarData();
+            if (radarData) radarData._timestamp = Date.now();
+        }
+        if (radarFrames.length) {
+            startRadarAnimation();
+            radarEnabled = true;
+            btn.classList.add('radar-active');
+            btn.innerHTML = '<i class="fas fa-cloud-rain"></i> Радар';
+        } else {
+            alert('Не удалось загрузить радар. Попробуйте позже.');
+            btn.innerHTML = '<i class="fas fa-cloud-rain"></i> Радар';
+        }
+        btn.disabled = false;
+    }
+}
+
+document.getElementById('radar-toggle').addEventListener('click', toggleRadar);
 
 // -------- Автообновление --------
 let autoUpdateInterval = null;
@@ -348,6 +434,8 @@ window.onload = async () => {
         window._lastLon = defaultCity.lon;
         fetchWeather(defaultCity.lat, defaultCity.lon, 'Москва');
     }
+    // Предзагрузка радара
+    fetchRadarData().then(() => { console.log('Радар данные загружены'); });
 };
 
 // Сохраняем координаты для автообновления

@@ -12,7 +12,7 @@
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-06-26T07:30:27.491394"
+    "updated_at": "2026-06-26T07:40:21.182192"
   },
   "Санкт-Петербург": {
     "lat": 59.9343,
@@ -27,7 +27,7 @@
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-06-26T07:30:28.004913"
+    "updated_at": "2026-06-26T07:40:21.853426"
   },
   "Новосибирск": {
     "lat": 55.0084,
@@ -42,7 +42,7 @@
       "is_thunderstorm": false
     },
     "risk": 30,
-    "updated_at": "2026-06-26T07:30:28.443587"
+    "updated_at": "2026-06-26T07:40:22.565445"
   },
   "Екатеринбург": {
     "lat": 56.8389,
@@ -57,7 +57,7 @@
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-06-26T07:30:28.929653"
+    "updated_at": "2026-06-26T07:40:23.259929"
   },
   "Казань": {
     "lat": 55.7887,
@@ -72,7 +72,7 @@
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-06-26T07:30:29.482941"
+    "updated_at": "2026-06-26T07:40:23.917473"
   },
   "Нижний Новгород": {
     "lat": 56.2965,
@@ -87,7 +87,7 @@
       "is_thunderstorm": false
     },
     "risk": 20,
-    "updated_at": "2026-06-26T07:30:29.920816"
+    "updated_at": "2026-06-26T07:40:24.588603"
   },
   "Челябинск": {
     "lat": 55.1644,
@@ -102,7 +102,7 @@
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-06-26T07:30:30.352409"
+    "updated_at": "2026-06-26T07:40:25.248762"
   },
   "Самара": {
     "lat": 53.1959,
@@ -117,7 +117,7 @@
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-06-26T07:30:30.807120"
+    "updated_at": "2026-06-26T07:40:25.928678"
   },
   "Омск": {
     "lat": 54.9885,
@@ -128,11 +128,11 @@
       "gust": 15.5,
       "precipitation": 0.0,
       "humidity": 69,
-      "condition": "Пасмурно",
-      "is_thunderstorm": false
+      "condition": "Гроза слабая/умеренная",
+      "is_thunderstorm": true
     },
-    "risk": 30,
-    "updated_at": "2026-06-26T07:30:31.224253"
+    "risk": 80,
+    "updated_at": "2026-06-26T07:40:26.587247"
   },
   "Ростов-на-Дону": {
     "lat": 47.2357,
@@ -147,7 +147,7 @@
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-06-26T07:30:31.806643"
+    "updated_at": "2026-06-26T07:40:27.256371"
   },
   "Уфа": {
     "lat": 54.7348,
@@ -304,7 +304,7 @@
     "lon": 53.2045,
     "weather": {
       "temp": 18.5,
-      "wind_speed": 5.8,
+      "wind_speed": 4.7,
       "gust": 8.6,
       "precipitation": 0.0,
       "humidity": 80,
@@ -312,13 +312,13 @@
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-06-26T07:01:54.405999"
+    "updated_at": "2026-06-26T07:42:10.331473"
   },
   "Барнаул": {
     "lat": 53.3561,
     "lon": 83.7697,
     "weather": {
-      "temp": 28.7,
+      "temp": 29.1,
       "wind_speed": 6.9,
       "gust": 18.7,
       "precipitation": 0.0,
@@ -327,14 +327,14 @@
       "is_thunderstorm": false
     },
     "risk": 30,
-    "updated_at": "2026-06-26T07:01:55.074174"
+    "updated_at": "2026-06-26T07:42:11.013565"
   },
   "Ульяновск": {
     "lat": 54.3142,
     "lon": 48.4031,
     "weather": {
       "temp": 18.3,
-      "wind_speed": 8.4,
+      "wind_speed": 8.8,
       "gust": 13.0,
       "precipitation": 0.6,
       "humidity": 82,
@@ -342,44 +342,44 @@
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-06-26T07:01:55.754337"
+    "updated_at": "2026-06-26T07:42:11.688538"
   },
   "Иркутск": {
     "lat": 52.2864,
     "lon": 104.2807,
     "weather": {
-      "temp": 22.9,
-      "wind_speed": 25.9,
+      "temp": 22.5,
+      "wind_speed": 18.4,
       "gust": 16.9,
       "precipitation": 0.0,
       "humidity": 82,
-      "condition": "Гроза слабая/умеренная",
-      "is_thunderstorm": true
+      "condition": "Морось умеренная",
+      "is_thunderstorm": false
     },
-    "risk": 80,
-    "updated_at": "2026-06-26T07:01:56.426801"
+    "risk": 30,
+    "updated_at": "2026-06-26T07:42:12.364817"
   },
   "Хабаровск": {
     "lat": 48.4802,
     "lon": 135.0719,
     "weather": {
-      "temp": 20.4,
-      "wind_speed": 6.0,
+      "temp": 20.2,
+      "wind_speed": 6.3,
       "gust": 20.2,
       "precipitation": 0.0,
       "humidity": 94,
-      "condition": "Преимущественно ясно",
+      "condition": "Морось слабая",
       "is_thunderstorm": false
     },
     "risk": 30,
-    "updated_at": "2026-06-26T07:01:57.105612"
+    "updated_at": "2026-06-26T07:42:13.057114"
   },
   "Ярославль": {
     "lat": 57.6261,
     "lon": 39.8845,
     "weather": {
-      "temp": 16.3,
-      "wind_speed": 5.1,
+      "temp": 16.6,
+      "wind_speed": 5.0,
       "gust": 9.0,
       "precipitation": 0.0,
       "humidity": 96,
@@ -387,14 +387,14 @@
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-06-26T07:01:57.748112"
+    "updated_at": "2026-06-26T07:42:13.748332"
   },
   "Махачкала": {
     "lat": 42.9849,
     "lon": 47.5046,
     "weather": {
-      "temp": 25.7,
-      "wind_speed": 3.4,
+      "temp": 25.9,
+      "wind_speed": 4.0,
       "gust": 13.0,
       "precipitation": 0.0,
       "humidity": 72,
@@ -402,7 +402,7 @@
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-06-26T07:12:26.145710"
+    "updated_at": "2026-06-26T07:42:14.437201"
   },
   "Оренбург": {
     "lat": 51.7675,
@@ -417,7 +417,7 @@
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-06-26T07:32:36.990932"
+    "updated_at": "2026-06-26T07:42:15.095053"
   },
   "Новокузнецк": {
     "lat": 53.7596,
@@ -428,11 +428,11 @@
       "gust": 1.4,
       "precipitation": 0.0,
       "humidity": 84,
-      "condition": "Переменная облачность",
+      "condition": "Преимущественно ясно",
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-06-26T07:32:37.415113"
+    "updated_at": "2026-06-26T07:42:15.774061"
   },
   "Рязань": {
     "lat": 54.6294,
@@ -447,7 +447,7 @@
       "is_thunderstorm": false
     },
     "risk": 20,
-    "updated_at": "2026-06-26T07:32:37.935092"
+    "updated_at": "2026-06-26T07:42:16.513375"
   },
   "Томск": {
     "lat": 56.4884,

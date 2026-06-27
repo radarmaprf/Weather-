@@ -138,7 +138,7 @@
     "lat": 47.2357,
     "lon": 39.7015,
     "weather": {
-      "temp": 20.9,
+      "temp": 20.7,
       "wind_speed": 4.1,
       "gust": 18.7,
       "precipitation": 0.0,
@@ -147,7 +147,7 @@
       "is_thunderstorm": false
     },
     "risk": 30,
-    "updated_at": "2026-06-27T18:50:51.358909"
+    "updated_at": "2026-06-27T19:11:51.328764"
   },
   "Уфа": {
     "lat": 54.7348,

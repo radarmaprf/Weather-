@@ -3,23 +3,23 @@
     "lat": 55.7558,
     "lon": 37.6173,
     "weather": {
-      "temp": 15.7,
-      "wind_speed": 4.8,
+      "temp": 15.6,
+      "wind_speed": 4.6,
       "gust": 2.9,
       "precipitation": 0.0,
       "humidity": 83,
-      "condition": "Пасмурно",
+      "condition": "Переменная облачность",
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-06-27T19:00:35.020117"
+    "updated_at": "2026-06-27T19:20:19.300736"
   },
   "Санкт-Петербург": {
     "lat": 59.9343,
     "lon": 30.3351,
     "weather": {
-      "temp": 16.8,
-      "wind_speed": 11.2,
+      "temp": 16.6,
+      "wind_speed": 10.8,
       "gust": 23.4,
       "precipitation": 0.0,
       "humidity": 67,
@@ -27,13 +27,13 @@
       "is_thunderstorm": false
     },
     "risk": 30,
-    "updated_at": "2026-06-27T19:00:35.468905"
+    "updated_at": "2026-06-27T19:20:19.976028"
   },
   "Новосибирск": {
     "lat": 55.0084,
     "lon": 82.9357,
     "weather": {
-      "temp": 19.4,
+      "temp": 19.2,
       "wind_speed": 4.7,
       "gust": 7.6,
       "precipitation": 0.0,
@@ -42,29 +42,29 @@
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-06-27T19:00:35.933471"
+    "updated_at": "2026-06-27T19:20:20.600694"
   },
   "Екатеринбург": {
     "lat": 56.8389,
     "lon": 60.6057,
     "weather": {
       "temp": 15.3,
-      "wind_speed": 7.2,
+      "wind_speed": 6.8,
       "gust": 21.6,
       "precipitation": 3.9,
       "humidity": 95,
-      "condition": "Дождь умеренный",
+      "condition": "Морось сильная",
       "is_thunderstorm": false
     },
     "risk": 30,
-    "updated_at": "2026-06-27T19:00:36.390585"
+    "updated_at": "2026-06-27T19:20:21.212059"
   },
   "Казань": {
     "lat": 55.7887,
     "lon": 49.1221,
     "weather": {
       "temp": 13.1,
-      "wind_speed": 7.9,
+      "wind_speed": 7.7,
       "gust": 17.6,
       "precipitation": 0.0,
       "humidity": 78,
@@ -72,13 +72,13 @@
       "is_thunderstorm": false
     },
     "risk": 30,
-    "updated_at": "2026-06-27T19:00:36.850464"
+    "updated_at": "2026-06-27T19:20:21.816323"
   },
   "Нижний Новгород": {
     "lat": 56.2965,
     "lon": 43.9361,
     "weather": {
-      "temp": 14.3,
+      "temp": 14.1,
       "wind_speed": 5.0,
       "gust": 7.6,
       "precipitation": 0.0,
@@ -87,7 +87,7 @@
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-06-27T19:00:37.373660"
+    "updated_at": "2026-06-27T19:20:22.424817"
   },
   "Челябинск": {
     "lat": 55.1644,

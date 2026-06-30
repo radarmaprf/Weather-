@@ -5,14 +5,14 @@
     "weather": {
       "temp": 19.9,
       "wind_speed": 3.4,
-      "gust": 8.3,
+      "gust": 7.9,
       "precipitation": 0.0,
-      "humidity": 74,
-      "condition": "Преимущественно ясно",
+      "humidity": 75,
+      "condition": "Переменная облачность",
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-06-30T22:00:32.950668"
+    "updated_at": "2026-06-30T22:10:19.154992"
   },
   "Санкт-Петербург": {
     "lat": 59.9343,
@@ -27,7 +27,7 @@
       "is_thunderstorm": false
     },
     "risk": 30,
-    "updated_at": "2026-06-30T22:00:33.653127"
+    "updated_at": "2026-06-30T22:10:19.638571"
   },
   "Новосибирск": {
     "lat": 55.0084,
@@ -42,82 +42,82 @@
       "is_thunderstorm": false
     },
     "risk": 30,
-    "updated_at": "2026-06-30T22:00:34.298050"
+    "updated_at": "2026-06-30T22:10:20.076317"
   },
   "Екатеринбург": {
     "lat": 56.8389,
     "lon": 60.6057,
     "weather": {
-      "temp": 13.0,
-      "wind_speed": 3.1,
-      "gust": 2.5,
+      "temp": 12.8,
+      "wind_speed": 2.7,
+      "gust": 2.2,
       "precipitation": 0.0,
-      "humidity": 78,
-      "condition": "Переменная облачность",
+      "humidity": 82,
+      "condition": "Туман",
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-06-30T22:00:34.962207"
+    "updated_at": "2026-06-30T22:10:20.470949"
   },
   "Казань": {
     "lat": 55.7887,
     "lon": 49.1221,
     "weather": {
-      "temp": 17.8,
-      "wind_speed": 6.9,
-      "gust": 17.3,
+      "temp": 18.0,
+      "wind_speed": 6.8,
+      "gust": 18.0,
       "precipitation": 0.0,
       "humidity": 61,
       "condition": "Преимущественно ясно",
       "is_thunderstorm": false
     },
     "risk": 30,
-    "updated_at": "2026-06-30T22:00:35.696582"
+    "updated_at": "2026-06-30T22:10:20.878271"
   },
   "Нижний Новгород": {
     "lat": 56.2965,
     "lon": 43.9361,
     "weather": {
-      "temp": 17.8,
-      "wind_speed": 3.6,
-      "gust": 12.2,
+      "temp": 17.4,
+      "wind_speed": 3.3,
+      "gust": 11.9,
       "precipitation": 0.0,
-      "humidity": 55,
+      "humidity": 59,
       "condition": "Преимущественно ясно",
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-06-30T22:00:36.355552"
+    "updated_at": "2026-06-30T22:10:21.369501"
   },
   "Челябинск": {
     "lat": 55.1644,
     "lon": 61.4368,
     "weather": {
-      "temp": 16.0,
-      "wind_speed": 2.9,
-      "gust": 6.8,
+      "temp": 15.4,
+      "wind_speed": 3.0,
+      "gust": 6.1,
       "precipitation": 0.0,
-      "humidity": 67,
+      "humidity": 73,
       "condition": "Ясно",
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-06-30T22:00:36.981548"
+    "updated_at": "2026-06-30T22:10:21.762317"
   },
   "Самара": {
     "lat": 53.1959,
     "lon": 50.1,
     "weather": {
       "temp": 16.9,
-      "wind_speed": 6.9,
-      "gust": 26.3,
+      "wind_speed": 7.0,
+      "gust": 24.8,
       "precipitation": 0.0,
-      "humidity": 90,
+      "humidity": 91,
       "condition": "Пасмурно",
       "is_thunderstorm": false
     },
     "risk": 30,
-    "updated_at": "2026-06-30T22:00:37.604769"
+    "updated_at": "2026-06-30T22:10:22.191842"
   },
   "Омск": {
     "lat": 54.9885,
@@ -132,22 +132,22 @@
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-06-30T22:00:38.212472"
+    "updated_at": "2026-06-30T22:10:22.590023"
   },
   "Ростов-на-Дону": {
     "lat": 47.2357,
     "lon": 39.7015,
     "weather": {
       "temp": 20.4,
-      "wind_speed": 3.4,
-      "gust": 9.0,
+      "wind_speed": 3.5,
+      "gust": 8.3,
       "precipitation": 0.0,
-      "humidity": 66,
-      "condition": "Преимущественно ясно",
+      "humidity": 69,
+      "condition": "Ясно",
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-06-30T22:00:38.870433"
+    "updated_at": "2026-06-30T22:10:23.033596"
   },
   "Уфа": {
     "lat": 54.7348,
@@ -162,14 +162,14 @@
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-06-30T22:00:39.524401"
+    "updated_at": "2026-06-30T22:10:23.486879"
   },
   "Красноярск": {
     "lat": 56.0106,
     "lon": 92.8526,
     "weather": {
-      "temp": 16.9,
-      "wind_speed": 2.3,
+      "temp": 17.1,
+      "wind_speed": 2.8,
       "gust": 9.4,
       "precipitation": 0.0,
       "humidity": 89,
@@ -177,14 +177,14 @@
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-06-30T21:50:25.124528"
+    "updated_at": "2026-06-30T22:10:23.990301"
   },
   "Владивосток": {
     "lat": 43.1316,
     "lon": 131.9238,
     "weather": {
-      "temp": 16.3,
-      "wind_speed": 5.2,
+      "temp": 16.5,
+      "wind_speed": 5.9,
       "gust": 18.4,
       "precipitation": 0.0,
       "humidity": 99,
@@ -192,22 +192,22 @@
       "is_thunderstorm": false
     },
     "risk": 30,
-    "updated_at": "2026-06-30T21:30:35.793420"
+    "updated_at": "2026-06-30T22:10:24.394633"
   },
   "Пермь": {
     "lat": 58.0104,
     "lon": 56.2294,
     "weather": {
-      "temp": 17.9,
-      "wind_speed": 5.1,
-      "gust": 18.4,
-      "precipitation": 0.1,
-      "humidity": 98,
+      "temp": 18.1,
+      "wind_speed": 5.6,
+      "gust": 16.2,
+      "precipitation": 0.2,
+      "humidity": 99,
       "condition": "Пасмурно",
       "is_thunderstorm": false
     },
     "risk": 30,
-    "updated_at": "2026-06-30T21:30:36.244174"
+    "updated_at": "2026-06-30T22:10:24.795802"
   },
   "Воронеж": {
     "lat": 51.6608,
@@ -348,31 +348,31 @@
     "lat": 42.9849,
     "lon": 47.5046,
     "weather": {
-      "temp": 22.4,
-      "wind_speed": 18.5,
-      "gust": 28.8,
+      "temp": 22.6,
+      "wind_speed": 19.5,
+      "gust": 29.9,
       "precipitation": 0.0,
-      "humidity": 54,
+      "humidity": 55,
       "condition": "Переменная облачность",
       "is_thunderstorm": false
     },
     "risk": 30,
-    "updated_at": "2026-06-30T22:02:25.159204"
+    "updated_at": "2026-06-30T22:12:26.858757"
   },
   "Оренбург": {
     "lat": 51.7675,
     "lon": 55.0989,
     "weather": {
-      "temp": 13.0,
+      "temp": 12.7,
       "wind_speed": 8.0,
-      "gust": 14.0,
+      "gust": 15.1,
       "precipitation": 0.0,
-      "humidity": 91,
-      "condition": "Ясно",
+      "humidity": 90,
+      "condition": "Преимущественно ясно",
       "is_thunderstorm": false
     },
-    "risk": 0,
-    "updated_at": "2026-06-30T22:02:25.817923"
+    "risk": 30,
+    "updated_at": "2026-06-30T22:12:27.339093"
   },
   "Новокузнецк": {
     "lat": 53.7596,
@@ -387,22 +387,22 @@
       "is_thunderstorm": false
     },
     "risk": 30,
-    "updated_at": "2026-06-30T22:02:26.543222"
+    "updated_at": "2026-06-30T22:12:27.758128"
   },
   "Рязань": {
     "lat": 54.6294,
     "lon": 39.7358,
     "weather": {
-      "temp": 18.6,
+      "temp": 18.4,
       "wind_speed": 4.5,
-      "gust": 10.8,
+      "gust": 10.4,
       "precipitation": 0.0,
-      "humidity": 67,
+      "humidity": 68,
       "condition": "Преимущественно ясно",
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-06-30T22:02:27.171089"
+    "updated_at": "2026-06-30T22:12:28.324507"
   },
   "Томск": {
     "lat": 56.4884,
@@ -417,29 +417,29 @@
       "is_thunderstorm": false
     },
     "risk": 30,
-    "updated_at": "2026-06-30T22:02:27.806286"
+    "updated_at": "2026-06-30T22:12:28.719536"
   },
   "Пенза": {
     "lat": 53.1959,
     "lon": 45.0182,
     "weather": {
-      "temp": 15.9,
-      "wind_speed": 6.0,
+      "temp": 16.0,
+      "wind_speed": 5.8,
       "gust": 14.8,
       "precipitation": 0.0,
-      "humidity": 65,
-      "condition": "Преимущественно ясно",
+      "humidity": 64,
+      "condition": "Ясно",
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-06-30T22:02:28.445558"
+    "updated_at": "2026-06-30T22:12:29.117014"
   },
   "Липецк": {
     "lat": 52.6086,
     "lon": 39.5994,
     "weather": {
       "temp": 18.1,
-      "wind_speed": 4.8,
+      "wind_speed": 4.3,
       "gust": 9.4,
       "precipitation": 0.0,
       "humidity": 63,
@@ -447,58 +447,58 @@
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-06-30T21:52:32.037324"
+    "updated_at": "2026-06-30T22:12:29.520760"
   },
   "Киров": {
     "lat": 58.6036,
     "lon": 49.6681,
     "weather": {
-      "temp": 14.9,
-      "wind_speed": 4.6,
-      "gust": 11.2,
+      "temp": 14.6,
+      "wind_speed": 4.4,
+      "gust": 10.8,
       "precipitation": 0.0,
-      "humidity": 68,
+      "humidity": 72,
       "condition": "Переменная облачность",
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-06-30T21:52:32.571458"
+    "updated_at": "2026-06-30T22:12:29.923244"
   },
   "Чебоксары": {
     "lat": 56.1398,
     "lon": 47.2966,
     "weather": {
-      "temp": 16.9,
+      "temp": 16.5,
       "wind_speed": 4.8,
-      "gust": 11.5,
+      "gust": 11.9,
       "precipitation": 0.0,
-      "humidity": 57,
-      "condition": "Пасмурно",
+      "humidity": 59,
+      "condition": "Преимущественно ясно",
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-06-30T21:52:33.099028"
+    "updated_at": "2026-06-30T22:12:30.330949"
   },
   "Калининград": {
     "lat": 54.7104,
     "lon": 20.4522,
     "weather": {
       "temp": 19.7,
-      "wind_speed": 7.2,
-      "gust": 24.1,
+      "wind_speed": 7.6,
+      "gust": 16.6,
       "precipitation": 0.0,
       "humidity": 64,
       "condition": "Пасмурно",
       "is_thunderstorm": false
     },
     "risk": 30,
-    "updated_at": "2026-06-30T21:52:33.660913"
+    "updated_at": "2026-06-30T22:12:30.742651"
   },
   "Тула": {
     "lat": 54.1931,
     "lon": 37.6175,
     "weather": {
-      "temp": 17.9,
+      "temp": 17.6,
       "wind_speed": 3.3,
       "gust": 8.6,
       "precipitation": 0.0,
@@ -507,51 +507,51 @@
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-06-30T21:32:42.495745"
+    "updated_at": "2026-06-30T22:12:31.149247"
   },
   "Сочи": {
     "lat": 43.5855,
     "lon": 39.7231,
     "weather": {
-      "temp": 21.9,
-      "wind_speed": 7.6,
-      "gust": 13.3,
+      "temp": 21.4,
+      "wind_speed": 7.3,
+      "gust": 13.0,
       "precipitation": 0.0,
-      "humidity": 88,
+      "humidity": 87,
       "condition": "Преимущественно ясно",
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-06-30T21:32:42.892688"
+    "updated_at": "2026-06-30T22:12:31.742864"
   },
   "Севастополь": {
     "lat": 44.6166,
     "lon": 33.5254,
     "weather": {
-      "temp": 22.3,
+      "temp": 21.9,
       "wind_speed": 3.4,
       "gust": 7.9,
       "precipitation": 0.0,
-      "humidity": 68,
+      "humidity": 67,
       "condition": "Переменная облачность",
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-06-30T21:32:43.386299"
+    "updated_at": "2026-06-30T22:12:32.152636"
   },
   "Симферополь": {
     "lat": 44.9521,
     "lon": 34.1024,
     "weather": {
-      "temp": 21.5,
-      "wind_speed": 5.2,
-      "gust": 14.4,
+      "temp": 21.1,
+      "wind_speed": 5.3,
+      "gust": 14.0,
       "precipitation": 0.0,
       "humidity": 61,
-      "condition": "Ясно",
+      "condition": "Преимущественно ясно",
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-06-30T21:32:43.786765"
+    "updated_at": "2026-06-30T22:12:32.552767"
   }
 }

@@ -12,7 +12,11 @@
       "is_thunderstorm": false
     },
     "risk": 0,
+<<<<<<< Updated upstream
     "updated_at": "2026-07-02T11:10:21.416701"
+=======
+    "updated_at": "2026-07-02T11:10:20.944515"
+>>>>>>> Stashed changes
   },
   "Санкт-Петербург": {
     "lat": 59.9343,
@@ -27,7 +31,11 @@
       "is_thunderstorm": false
     },
     "risk": 30,
+<<<<<<< Updated upstream
     "updated_at": "2026-07-02T11:10:21.852826"
+=======
+    "updated_at": "2026-07-02T11:10:21.460119"
+>>>>>>> Stashed changes
   },
   "Новосибирск": {
     "lat": 55.0084,
@@ -42,7 +50,11 @@
       "is_thunderstorm": false
     },
     "risk": 30,
+<<<<<<< Updated upstream
     "updated_at": "2026-07-02T11:10:22.254392"
+=======
+    "updated_at": "2026-07-02T11:10:22.030273"
+>>>>>>> Stashed changes
   },
   "Екатеринбург": {
     "lat": 56.8389,
@@ -57,7 +69,11 @@
       "is_thunderstorm": false
     },
     "risk": 0,
+<<<<<<< Updated upstream
     "updated_at": "2026-07-02T11:10:22.631819"
+=======
+    "updated_at": "2026-07-02T11:10:22.518341"
+>>>>>>> Stashed changes
   },
   "Казань": {
     "lat": 55.7887,
@@ -72,7 +88,11 @@
       "is_thunderstorm": false
     },
     "risk": 20,
+<<<<<<< Updated upstream
     "updated_at": "2026-07-02T11:10:23.023526"
+=======
+    "updated_at": "2026-07-02T11:10:22.991177"
+>>>>>>> Stashed changes
   },
   "Нижний Новгород": {
     "lat": 56.2965,
@@ -87,7 +107,11 @@
       "is_thunderstorm": false
     },
     "risk": 0,
+<<<<<<< Updated upstream
     "updated_at": "2026-07-02T11:10:23.435137"
+=======
+    "updated_at": "2026-07-02T11:10:23.512139"
+>>>>>>> Stashed changes
   },
   "Челябинск": {
     "lat": 55.1644,
@@ -102,7 +126,11 @@
       "is_thunderstorm": false
     },
     "risk": 0,
+<<<<<<< Updated upstream
     "updated_at": "2026-07-02T11:10:23.847190"
+=======
+    "updated_at": "2026-07-02T11:10:23.977630"
+>>>>>>> Stashed changes
   },
   "Самара": {
     "lat": 53.1959,
@@ -117,7 +145,11 @@
       "is_thunderstorm": false
     },
     "risk": 20,
+<<<<<<< Updated upstream
     "updated_at": "2026-07-02T11:10:24.226837"
+=======
+    "updated_at": "2026-07-02T11:10:24.465571"
+>>>>>>> Stashed changes
   },
   "Омск": {
     "lat": 54.9885,
@@ -132,7 +164,11 @@
       "is_thunderstorm": false
     },
     "risk": 30,
+<<<<<<< Updated upstream
     "updated_at": "2026-07-02T11:10:24.618295"
+=======
+    "updated_at": "2026-07-02T11:10:25.057743"
+>>>>>>> Stashed changes
   },
   "Ростов-на-Дону": {
     "lat": 47.2357,
@@ -147,7 +183,11 @@
       "is_thunderstorm": false
     },
     "risk": 20,
+<<<<<<< Updated upstream
     "updated_at": "2026-07-02T11:10:25.107713"
+=======
+    "updated_at": "2026-07-02T11:10:25.522858"
+>>>>>>> Stashed changes
   },
   "Уфа": {
     "lat": 54.7348,
@@ -162,7 +202,11 @@
       "is_thunderstorm": false
     },
     "risk": 20,
+<<<<<<< Updated upstream
     "updated_at": "2026-07-02T11:10:25.498358"
+=======
+    "updated_at": "2026-07-02T11:10:26.036177"
+>>>>>>> Stashed changes
   },
   "Красноярск": {
     "lat": 56.0106,
@@ -177,7 +221,11 @@
       "is_thunderstorm": false
     },
     "risk": 0,
+<<<<<<< Updated upstream
     "updated_at": "2026-07-02T11:10:25.879973"
+=======
+    "updated_at": "2026-07-02T11:10:26.509508"
+>>>>>>> Stashed changes
   },
   "Владивосток": {
     "lat": 43.1316,
@@ -192,7 +240,11 @@
       "is_thunderstorm": false
     },
     "risk": 30,
+<<<<<<< Updated upstream
     "updated_at": "2026-07-02T11:10:26.256558"
+=======
+    "updated_at": "2026-07-02T11:10:26.997142"
+>>>>>>> Stashed changes
   },
   "Пермь": {
     "lat": 58.0104,
@@ -387,7 +439,7 @@
       "is_thunderstorm": false
     },
     "risk": 0,
-    "updated_at": "2026-07-02T11:02:50.075236"
+    "updated_at": "2026-07-02T11:12:29.460853"
   },
   "Махачкала": {
     "lat": 42.9849,
@@ -402,7 +454,7 @@
       "is_thunderstorm": false
     },
     "risk": 20,
-    "updated_at": "2026-07-02T11:02:50.594338"
+    "updated_at": "2026-07-02T11:12:29.922671"
   },
   "Оренбург": {
     "lat": 51.7675,
@@ -417,7 +469,11 @@
       "is_thunderstorm": false
     },
     "risk": 20,
+<<<<<<< Updated upstream
     "updated_at": "2026-07-02T11:12:29.443320"
+=======
+    "updated_at": "2026-07-02T11:12:30.376868"
+>>>>>>> Stashed changes
   },
   "Новокузнецк": {
     "lat": 53.7596,
@@ -432,7 +488,11 @@
       "is_thunderstorm": false
     },
     "risk": 0,
+<<<<<<< Updated upstream
     "updated_at": "2026-07-02T11:12:29.821830"
+=======
+    "updated_at": "2026-07-02T11:12:30.863705"
+>>>>>>> Stashed changes
   },
   "Рязань": {
     "lat": 54.6294,
@@ -447,7 +507,11 @@
       "is_thunderstorm": false
     },
     "risk": 0,
+<<<<<<< Updated upstream
     "updated_at": "2026-07-02T11:12:30.218732"
+=======
+    "updated_at": "2026-07-02T11:12:31.353754"
+>>>>>>> Stashed changes
   },
   "Томск": {
     "lat": 56.4884,
@@ -462,7 +526,11 @@
       "is_thunderstorm": false
     },
     "risk": 0,
+<<<<<<< Updated upstream
     "updated_at": "2026-07-02T11:12:30.604751"
+=======
+    "updated_at": "2026-07-02T11:12:31.816616"
+>>>>>>> Stashed changes
   },
   "Пенза": {
     "lat": 53.1959,
@@ -477,7 +545,11 @@
       "is_thunderstorm": false
     },
     "risk": 20,
+<<<<<<< Updated upstream
     "updated_at": "2026-07-02T11:12:30.993770"
+=======
+    "updated_at": "2026-07-02T11:12:32.280965"
+>>>>>>> Stashed changes
   },
   "Липецк": {
     "lat": 52.6086,
@@ -492,7 +564,11 @@
       "is_thunderstorm": false
     },
     "risk": 0,
+<<<<<<< Updated upstream
     "updated_at": "2026-07-02T11:12:31.383265"
+=======
+    "updated_at": "2026-07-02T11:12:32.791585"
+>>>>>>> Stashed changes
   },
   "Киров": {
     "lat": 58.6036,
@@ -507,7 +583,11 @@
       "is_thunderstorm": false
     },
     "risk": 20,
+<<<<<<< Updated upstream
     "updated_at": "2026-07-02T11:12:31.771511"
+=======
+    "updated_at": "2026-07-02T11:12:33.279519"
+>>>>>>> Stashed changes
   },
   "Чебоксары": {
     "lat": 56.1398,
@@ -522,7 +602,11 @@
       "is_thunderstorm": false
     },
     "risk": 30,
+<<<<<<< Updated upstream
     "updated_at": "2026-07-02T11:12:32.253024"
+=======
+    "updated_at": "2026-07-02T11:12:33.742884"
+>>>>>>> Stashed changes
   },
   "Калининград": {
     "lat": 54.7104,
@@ -537,7 +621,11 @@
       "is_thunderstorm": false
     },
     "risk": 30,
+<<<<<<< Updated upstream
     "updated_at": "2026-07-02T11:12:32.645279"
+=======
+    "updated_at": "2026-07-02T11:12:34.218060"
+>>>>>>> Stashed changes
   },
   "Тула": {
     "lat": 54.1931,
@@ -552,7 +640,11 @@
       "is_thunderstorm": false
     },
     "risk": 0,
+<<<<<<< Updated upstream
     "updated_at": "2026-07-02T11:12:33.059014"
+=======
+    "updated_at": "2026-07-02T11:12:34.672528"
+>>>>>>> Stashed changes
   },
   "Сочи": {
     "lat": 43.5855,
@@ -567,7 +659,11 @@
       "is_thunderstorm": false
     },
     "risk": 20,
+<<<<<<< Updated upstream
     "updated_at": "2026-07-02T11:12:33.460056"
+=======
+    "updated_at": "2026-07-02T11:12:35.144287"
+>>>>>>> Stashed changes
   },
   "Севастополь": {
     "lat": 44.6166,
